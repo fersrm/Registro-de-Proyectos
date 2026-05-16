@@ -1,0 +1,147 @@
+{% extends 'components/Layout/base_extendido.html' %}
+{% load static %}   
+
+{% block content_main %} 
+
+<div class="mb-4 flex justify-end">
+  {% if show_inactive %}
+    <a href="{% url 'User' %}"
+      class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500">
+      Ver usuarios activos
+    </a>
+  {% else %}
+    <a href="{% url 'User' %}?inactive=1"
+      class="rounded-md bg-gray-700 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-600">
+      Ver usuarios inactivos
+    </a>
+  {% endif %}
+</div>
+
+{% if users %}
+    <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+      {% for user, verifition in verification_users %}
+      
+        <li class="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow max-w-[450px]">
+          <div class="flex w-full items-center justify-between space-x-6 p-6">
+            <div class="flex-1 truncate">
+              <div class="flex items-center space-x-3">
+                <h3 class="truncate text-sm font-medium text-gray-900">
+                  {{ user.username}}   
+                </h3>
+                
+                <span class="inline-flex flex-shrink-0 items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                  {{ user.profile.position_FK }}
+                </span>
+              </div>
+              <p class="mt-1 truncate text-sm text-gray-500 flex justify-between">
+                {{ user.first_name }} {{ user.last_name }}
+                {% if verifition %}
+                    <span class="inline-flex flex-shrink-0 items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                      Verificado
+                    </span>
+                {% else %}
+                    <span class="inline-flex flex-shrink-0 items-center rounded-full bg-red-50 px-1.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-green-600/20">
+                      No Verificado
+                    </span> 
+                {% endif %}
+              </p>
+            </div>
+            <img class="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300" src="{{ user.profile.image.url }}" alt="perfil">
+          </div>
+          <div>
+            <div class="-mt-px flex divide-x divide-gray-200">
+
+              <div class="flex w-0 flex-1">
+                <a href="mailto:{{ user.email }}" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900 hover:bg-blue-50">
+                  <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                    <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                  </svg>
+                  Email
+                </a>
+              </div>
+
+              <div class="flex w-0 flex-1" x-data="{ open: false }">
+
+                {% if show_inactive %}
+                  <form method="POST" action="{% url 'UserActivate' user.id %}" class="w-full">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="inline-flex w-full items-center justify-center rounded-br-lg py-4 text-sm font-semibold text-green-700 hover:bg-green-50">
+                      Activar
+                    </button>
+                  </form>
+
+                {% elif not user.is_superuser %}
+
+                  <button type="button"
+                          @click="open = true"
+                          class="inline-flex w-full items-center justify-center rounded-br-lg py-4 text-sm font-semibold text-red-700 hover:bg-red-50">
+                    Eliminar
+                  </button>
+
+                  <!-- Modal -->
+                  <div x-show="open"
+                      x-cloak
+                      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+
+                    <div @click.away="open = false"
+                        class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+
+                      <h2 class="text-lg font-semibold text-gray-900">
+                        Confirmar eliminación
+                      </h2>
+
+                      <p class="mt-2 text-sm text-gray-600">
+                        ¿Está seguro de desactivar al usuario
+                        {{ user.username }}?
+                      </p>
+
+                      <div class="mt-6 flex justify-end gap-3">
+                        <button type="button"
+                                @click="open = false"
+                                class="rounded-md bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200">
+                          Cancelar
+                        </button>
+
+                        <form method="POST" action="{% url 'UserDeactivate' user.id %}">
+                          {% csrf_token %}
+                          <button type="submit"
+                                  class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500">
+                            Sí, eliminar
+                          </button>
+                        </form>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                {% else %}
+
+                  <div class="inline-flex w-full items-center justify-center rounded-br-lg py-4 text-sm font-semibold text-yellow-700 bg-yellow-50">
+                    Administrador
+                  </div>
+
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        </li>
+        
+      {% endfor %}
+
+    </ul>  
+
+    {% include 'components/paginador.html' %}  
+  {% else %}
+
+    <strong>NO HAY REGISTROS</strong>
+      
+  {% endif %}
+
+{% include 'components/mensajes.html' %}  
+
+{% endblock content_main %}
