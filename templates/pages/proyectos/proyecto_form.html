@@ -1,0 +1,130 @@
+{% extends 'components/Layout/base_extendido.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content_main %} 
+
+<div class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-xl shadow mb-7">
+    <h1 class="text-2xl font-bold mb-6">
+        Proyecto
+    </h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form|crispy }}
+
+        <hr class="my-8">
+
+        <h2 class="text-xl font-semibold mb-4">
+            Equipo de trabajo
+        </h2>
+
+        {{ formset.management_form }}
+
+        <div id="integrantes-container" class="space-y-4">
+            {% for integrante_form in formset %}
+                <div class="integrante-form grid grid-cols-1 md:grid-cols-3 gap-4 border p-4 rounded-lg bg-gray-50">
+                    {{ integrante_form.id }}
+
+                    <div>
+                        {{ integrante_form.nombre|as_crispy_field }}
+                    </div>
+
+                    <div>
+                        {{ integrante_form.rol|as_crispy_field }}
+                    </div>
+
+                    <div class="flex items-center">
+                        {% if integrante_form.DELETE %}
+                            {{ integrante_form.DELETE }}
+                            <span class="ml-2 text-sm text-red-600">Eliminar</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button"
+                id="add-integrante"
+                class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Agregar integrante
+        </button>
+
+        <div class="mt-8">
+          {% include "components/btn/button.html" with button_text="Guardar cambios" %}
+        </div>
+    </form>
+</div>
+
+<script>
+    const addButton = document.getElementById("add-integrante");
+    const container = document.getElementById("integrantes-container");
+    const totalForms = document.getElementById("id_integrantes-TOTAL_FORMS");
+
+    addButton.addEventListener("click", function () {
+        const currentFormCount = parseInt(totalForms.value);
+        const firstForm = document.querySelector(".integrante-form");
+        const newForm = firstForm.cloneNode(true);
+
+        newForm.innerHTML = newForm.innerHTML.replaceAll(
+            `integrantes-${currentFormCount - 1}`,
+            `integrantes-${currentFormCount}`
+        );
+
+        newForm.innerHTML = newForm.innerHTML.replaceAll(
+            `integrantes-${currentFormCount - 1}`,
+            `integrantes-${currentFormCount}`
+        );
+
+        const inputs = newForm.querySelectorAll("input, select, textarea");
+
+        inputs.forEach(input => {
+            if (input.type !== "hidden") {
+                input.value = "";
+            }
+
+            if (input.type === "checkbox") {
+                input.checked = false;
+            }
+        });
+
+        container.appendChild(newForm);
+        totalForms.value = currentFormCount + 1;
+    });
+</script>
+
+
+<script>
+    function crearContadorTextarea(textareaId, minCaracteres, contadorId) {
+        const textarea = document.getElementById(textareaId);
+
+        if (!textarea) return;
+
+        const contador = document.createElement("div");
+        contador.id = contadorId;
+        contador.className = "text-right text-sm mt-1 mb-3 font-medium";
+
+        textarea.insertAdjacentElement("afterend", contador);
+
+        function actualizarContador() {
+            const cantidad = textarea.value.trim().length;
+
+            contador.innerText = `${cantidad}/${minCaracteres} caracteres mínimos`;
+
+            if (cantidad < minCaracteres) {
+                contador.className = "text-right text-sm mt-1 mb-3 font-medium text-red-600";
+            } else {
+                contador.className = "text-right text-sm mt-1 mb-3 font-medium text-green-600";
+            }
+        }
+
+        textarea.addEventListener("input", actualizarContador);
+        actualizarContador();
+    }
+
+    crearContadorTextarea("id_descripcion", 100, "contadorDescripcion");
+    crearContadorTextarea("id_objetivos", 50, "contadorObjetivos");
+</script>
+
+{% endblock content_main %}

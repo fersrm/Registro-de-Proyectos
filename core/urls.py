@@ -8,6 +8,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     path("", include("homeApp.urls")),
     path("", include("UsuarioApp.urls")),
+    path("proyectos/", include("ProyectosApp.urls")),
 ]
 
 if settings.DEBUG:

@@ -47,3 +47,65 @@ strong {
 #div_id_remember {
   display: none;
 }
+
+/* Contenedor de cada input de imagen */
+#div_id_imagen_1,
+#div_id_imagen_2,
+#div_id_imagen_3 {
+  margin-bottom: 1.2rem;
+}
+
+/* Label */
+#div_id_imagen_1 label,
+#div_id_imagen_2 label,
+#div_id_imagen_3 label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Input file */
+#id_imagen_1,
+#id_imagen_2,
+#id_imagen_3 {
+  width: 100%;
+  border: 2px dashed #cbd5e1;
+  border-radius: 0.9rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+#id_imagen_1:hover,
+#id_imagen_2:hover,
+#id_imagen_3:hover {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+/* Botón interno del input file */
+#id_imagen_1::file-selector-button,
+#id_imagen_2::file-selector-button,
+#id_imagen_3::file-selector-button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover del botón */
+#id_imagen_1::file-selector-button:hover,
+#id_imagen_2::file-selector-button:hover,
+#id_imagen_3::file-selector-button:hover {
+  background-color: #1d4ed8;
+}

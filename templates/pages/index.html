@@ -3,10 +3,127 @@
 {% load humanize %}
 
 {% block content_main %} 
-          
-  <div class="sm:h-dvh">
-      <h2 class=" text-zinc-400 text-center pb-3 text-2xl" >Grafico Ejemplo</h2>
-      <div class="w-full h-[600px]" id="chart_home">
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+
+      <!-- CARD CANTIDAD -->
+      <div class="bg-white/10 border border-white/10 rounded-2xl p-6 shadow">
+          <p class="text-sm text-gray-300">
+              Proyectos cargados
+          </p>
+
+          <p class="text-4xl font-bold text-white mt-3">
+              {{ cantidad_proyectos }}
+          </p>
+
+          <p class="text-gray-400 text-sm mt-2">
+              Total de proyectos registrados en el sistema.
+          </p>
+      </div>
+
+      <!-- CARD ÚLTIMO PROYECTO -->
+      <div class="lg:col-span-2 bg-white rounded-2xl shadow overflow-hidden">
+
+          {% if ultimo_proyecto %}
+
+              <a href="{% url 'proyectos:detalle' ultimo_proyecto.pk %}"
+                class="block hover:bg-gray-50 transition">
+
+                  <div class="grid grid-cols-1 md:grid-cols-3">
+
+                      {% if ultimo_proyecto.imagen_1 %}
+                          <img src="{{ ultimo_proyecto.imagen_1.url }}"
+                              class="w-full h-full min-h-[220px] object-cover">
+                      {% else %}
+                          <div class="bg-gray-200 min-h-[220px] flex items-center justify-center text-gray-500">
+                              Sin imagen
+                          </div>
+                      {% endif %}
+
+                      <div class="md:col-span-2 p-6">
+
+                          <div class="flex justify-between items-start gap-4">
+                              <div>
+                                  <p class="text-sm font-semibold text-blue-600">
+                                      Último proyecto cargado
+                                  </p>
+
+                                  <h2 class="text-2xl font-bold text-gray-900 mt-1">
+                                      {{ ultimo_proyecto.titulo }}
+                                  </h2>
+                              </div>
+
+                              <span class="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full whitespace-nowrap">
+                                  {{ ultimo_proyecto.trl }}
+                              </span>
+                          </div>
+
+                          <p class="text-gray-500 mt-2">
+                              {{ ultimo_proyecto.empresa_organizacion }}
+                          </p>
+
+                          <p class="text-gray-600 text-sm mt-4 line-clamp-3">
+                              {{ ultimo_proyecto.descripcion }}
+                          </p>
+
+                          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 text-sm">
+                              {% if user.profile.position_FK.permission_code != "RESTRICTED" %}  
+                                <div>
+                                    <p class="text-gray-400">
+                                        Fecha carga
+                                    </p>
+                                    <p class="font-semibold text-gray-700">
+                                        {{ ultimo_proyecto.creado|date:"d/m/Y H:i" }}
+                                    </p>
+                                </div>
+                              {% endif %}
+
+                              <div>
+                                  <p class="text-gray-400">
+                                      Creado por
+                                  </p>
+                                  <p class="font-semibold text-gray-700">
+                                      {% if ultimo_proyecto.creado_por %}
+                                          {{ ultimo_proyecto.creado_por.get_full_name|default:ultimo_proyecto.creado_por.username }}
+                                      {% else %}
+                                          No registrado
+                                      {% endif %}
+                                  </p>
+                              </div>
+
+                              <div>
+                                  <p class="text-gray-400">
+                                      Docente líder
+                                  </p>
+                                  <p class="font-semibold text-gray-700">
+                                      {{ ultimo_proyecto.docente_lider.get_full_name|default:ultimo_proyecto.docente_lider.username }}
+                                  </p>
+                              </div>
+
+                          </div>
+
+                      </div>
+
+                  </div>
+
+              </a>
+
+          {% else %}
+
+              <div class="p-8 text-center">
+                  <h2 class="text-xl font-bold text-gray-800">
+                      No hay proyectos cargados
+                  </h2>
+
+                  <p class="text-gray-500 mt-2">
+                      Cuando se registre un proyecto, aparecerá aquí.
+                  </p>
+              </div>
+
+          {% endif %}
+
+      </div>
+
   </div>
 
   <!-- Activity list -->
@@ -88,10 +205,3 @@
   {% include 'components/mensajes.html' %}
 
 {% endblock content_main %}
-
-{% block javascript %}
-
-  <script defer src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
-  <script defer src="{% static 'js/grafico_home.js' %}"></script>
-
-{% endblock javascript %}

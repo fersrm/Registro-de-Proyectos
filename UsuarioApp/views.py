@@ -1,11 +1,11 @@
 from .forms import UserCreateForm, ProfileCreateForm, UserUpdateForm, ProfileUpdateForm
 from django.views.generic import ListView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from allauth.account.models import EmailAddress
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from core.mixins import PermitsPositionMixin
 
 
@@ -66,7 +66,8 @@ class UserDeactivateView(LoginRequiredMixin, PermitsPositionMixin, View):
 
         messages.success(request, "Usuario desactivado correctamente.")
         return redirect("User")
-    
+
+
 class UserActivateView(LoginRequiredMixin, PermitsPositionMixin, View):
     def post(self, request, pk, *args, **kwargs):
         user = User.objects.get(pk=pk)
@@ -75,7 +76,6 @@ class UserActivateView(LoginRequiredMixin, PermitsPositionMixin, View):
 
         messages.success(request, "Usuario activado correctamente.")
         return redirect("User")
-
 
 
 class UserCreateView(LoginRequiredMixin, PermitsPositionMixin, View):

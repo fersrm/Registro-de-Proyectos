@@ -1,0 +1,329 @@
+{% extends 'components/Layout/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="py-14">
+  <div class="max-w-7xl mx-auto px-4 py-8 bg-slate-50 rounded-2xl">
+
+    {% if user.is_authenticated %}
+      <div class="mb-8">
+          <a href="{% url 'proyectos:listar' %}"
+            class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-blue-500 hover:bg-blue-50 text-gray-700 hover:text-blue-700 px-4 py-2 rounded-xl shadow-sm transition-all duration-200 group">
+              <span class="text-lg transition-transform duration-200 group-hover:-translate-x-1">
+                <svg width="20" height="20" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+                </svg>
+              </span>
+
+              <span class="font-medium">
+                  Volver a proyectos
+              </span>
+          </a>
+      </div>
+    {% endif %}
+
+      <!-- HEADER -->
+      <div class="mb-8">
+          <div class="flex justify-between items-start">
+
+              <div class="flex items-center gap-3 flex-wrap">
+                  <h1 class="text-3xl md:text-4xl font-bold text-gray-900">
+                      {{ proyecto.titulo }}
+                  </h1>
+
+                  <span class="bg-red-100 text-red-700 border border-red-200 px-3 py-1 rounded-lg text-sm font-semibold">
+                      {{ proyecto.trl }}
+                  </span>
+              </div>
+
+              <!-- LOGO GRANDE -->
+              <img
+                  class="hidden sm:block h-14 w-auto object-contain opacity-90"
+                  src="{% static 'img/logo-inacap.png' %}"
+                  alt="INACAP">
+
+              <!-- LOGO PEQUEÑO -->
+              <img
+                  class="block sm:hidden h-10 w-auto object-contain opacity-90"
+                  src="{% static 'img/logo-ina-peque.png' %}"
+                  alt="INACAP">
+
+          </div>
+
+          <div class="flex gap-3 items-center mt-3">
+              <svg width="20" height="20" fill="#6b7280"  class="bi bi-geo-alt" viewBox="0 0 16 16">
+                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+              </svg>
+      
+              <p class="text-gray-500 text-lg">
+                  {{ proyecto.lugar }}
+              </p>
+          </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          <!-- COLUMNA IZQUIERDA -->
+          <div class="lg:col-span-2 space-y-6">
+
+              <!-- IMÁGENES -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {% if proyecto.imagen_1 %}
+                      <img src="{{ proyecto.imagen_1.url }}"
+                          class="w-full h-56 object-cover rounded-xl shadow">
+                  {% endif %}
+
+                  {% if proyecto.imagen_2 %}
+                      <img src="{{ proyecto.imagen_2.url }}"
+                          class="w-full h-56 object-cover rounded-xl shadow">
+                  {% endif %}
+
+                  {% if proyecto.imagen_3 %}
+                      <img src="{{ proyecto.imagen_3.url }}"
+                          class="w-full h-56 object-cover rounded-xl shadow">
+                  {% endif %}
+              </div>
+
+              <!-- TRL -->
+              <div class="bg-white border rounded-2xl shadow-sm p-6">
+                  <h2 class="text-2xl font-bold text-gray-900 mb-5">
+                      Technology Readiness Levels (TRL)
+                  </h2>
+
+                  <div class="flex items-center gap-4 flex-wrap">
+                      <span class="text-gray-700 font-medium">
+                          Nivel: {{ proyecto.trl|slice:"3:" }}
+                      </span>
+
+                      <div class="flex items-center gap-4">
+
+                          {% for i in "12345678" %}
+                              {% if proyecto.trl == "TRL"|add:i %}
+                                  <span class="w-6 h-6 rounded-full bg-red-500 shadow-md inline-block"></span>
+                              {% else %}
+                                  <span class="w-6 h-6 rounded-full bg-gray-900 shadow-md inline-block"></span>
+                              {% endif %}
+                          {% endfor %}
+
+                      </div>
+                  </div>
+              </div>
+
+              <!-- ACORDEÓN DESCRIPCIÓN -->
+              <details open class="bg-white border rounded-2xl shadow-sm overflow-hidden">
+                  <summary class="cursor-pointer select-none p-6 flex justify-between items-center font-bold text-gray-900 text-lg">
+                    <div class="flex gap-7">
+                      <svg width="26" height="26" fill="#2563eb" class="bi bi-file-earmark-medical" viewBox="0 0 16 16">
+                        <path d="M7.5 5.5a.5.5 0 0 0-1 0v.634l-.549-.317a.5.5 0 1 0-.5.866L6 7l-.549.317a.5.5 0 1 0 .5.866l.549-.317V8.5a.5.5 0 1 0 1 0v-.634l.549.317a.5.5 0 1 0 .5-.866L8 7l.549-.317a.5.5 0 1 0-.5-.866l-.549.317zm-2 4.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1z"/>
+                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/>
+                      </svg>  
+                      <span>Descripción del proyecto</span>
+                    </div>
+                      <span class="text-xl">+</span>
+                  </summary>
+
+                  <div class="px-6 pb-6 text-gray-700 whitespace-pre-line leading-relaxed">
+                      {{ proyecto.descripcion }}
+                  </div>
+              </details>
+
+              <!-- ACORDEÓN OBJETIVOS -->
+              <details class="bg-white border rounded-2xl shadow-sm overflow-hidden">
+                  <summary class="cursor-pointer select-none p-6 flex justify-between items-center font-bold text-gray-900 text-lg">
+                    <div class="flex gap-7">
+                      <svg width="26" height="26" fill="#c51e1e" class="bi bi-bullseye" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 13A5 5 0 1 1 8 3a5 5 0 0 1 0 10m0 1A6 6 0 1 0 8 2a6 6 0 0 0 0 12"/>
+                        <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8"/>
+                        <path d="M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                      </svg> 
+                      <span>Objetivos del proyecto</span>
+                    </div>
+                      <span class="text-xl">+</span>
+                  </summary>
+
+                  <div class="px-6 pb-6 text-gray-700 whitespace-pre-line leading-relaxed">
+                      {{ proyecto.objetivos }}
+                  </div>
+              </details>
+
+          </div>
+
+          <!-- COLUMNA DERECHA -->
+          <div class="space-y-6">
+
+              <!-- INFO -->
+              <div class="bg-white border rounded-2xl shadow-sm p-6 space-y-5">
+
+                
+                  <div class="border-b pb-4 flex items-center gap-7">
+                      <svg width="26" height="26" fill="#2563eb" class="bi bi-calendar2-week" viewBox="0 0 16 16">
+                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
+                        <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5zM11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+                      </svg>
+
+                      <div>
+                        <p class="text-sm text-gray-400">
+                            Fecha de inicio
+                        </p>
+                        <p class="font-semibold text-gray-800">
+                            {{ proyecto.fecha_inicio }}
+                        </p>
+                      </div>
+                  </div>
+
+                  <div class="border-b pb-4 flex items-center gap-7">
+                    <svg width="26" height="26" fill="#2563eb" class="bi bi-people" viewBox="0 0 16 16">
+                      <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+                    </svg>
+                    <div>
+                      <p class="text-sm text-gray-400">
+                          Docente líder
+                      </p>
+                      <p class="font-semibold text-gray-800">
+                          {{ proyecto.docente_lider.get_full_name|default:proyecto.docente_lider.username }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="border-b pb-4 flex items-center gap-7">
+
+                    <svg width="26" height="26" fill="#2563eb" class="bi bi-award" viewBox="0 0 16 16">
+                      <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702z"/>
+                      <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1z"/>
+                    </svg>
+
+                    <div>
+                      <p class="text-sm text-gray-400">
+                          Grado de TRL
+                      </p>
+                      <p class="font-semibold text-gray-800">
+                          {{ proyecto.trl }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="{% if user.profile.position_FK.permission_code != "RESTRICTED" %} border-b {% endif %} pb-4 flex items-center gap-7">
+
+                    <svg width="26" height="26" fill="#2563eb" class="bi bi-buildings" viewBox="0 0 16 16">
+                      <path d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022M6 8.694 1 10.36V15h5zM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5z"/>
+                      <path d="M2 11h1v1H2zm2 0h1v1H4zm-2 2h1v1H2zm2 0h1v1H4zm4-4h1v1H8zm2 0h1v1h-1zm-2 2h1v1H8zm2 0h1v1h-1zm2-2h1v1h-1zm0 2h1v1h-1zM8 7h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zM8 5h1v1H8zm2 0h1v1h-1zm2 0h1v1h-1zm0-2h1v1h-1z"/>
+                    </svg>
+
+                    <div>
+                      <p class="text-sm text-gray-400">
+                          Empresa u organización asociada
+                      </p>
+                      <p class="font-semibold text-gray-800">
+                          {{ proyecto.empresa_organizacion }}
+                      </p>
+                    </div>
+                  </div>
+
+                  {% if user.profile.position_FK.permission_code != "RESTRICTED" %}   
+                    <div class="flex items-center gap-7">
+
+                      <svg width="26" height="26" fill="#2563eb" class="bi bi-clock" viewBox="0 0 16 16">
+                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                      </svg>
+                      <div>
+                        <p class="text-sm text-gray-400">
+                            Fecha de creación
+                        </p>
+                        <p class="font-semibold text-gray-800">
+                            {{ proyecto.creado }}
+                        </p>
+                      </div>
+                    </div>
+                  {% endif %}
+                  
+              </div>
+
+              <!-- EQUIPO -->
+              <div class="bg-white border rounded-2xl shadow-sm p-6">
+
+                  <h2 class="text-xl font-bold text-gray-900 mb-5">
+                      Equipo de trabajo
+                  </h2>
+
+                  {% if proyecto.integrantes.all %}
+
+                  <div class="overflow-hidden rounded-xl border border-gray-200">
+
+                      <table class="min-w-full">
+
+                          <thead class="bg-gray-100">
+                              <tr>
+                                  <th class="text-left px-4 py-3 text-sm font-semibold text-gray-700">
+                                      Nombre
+                                  </th>
+
+                                  <th class="text-left px-4 py-3 text-sm font-semibold text-gray-700">
+                                      Rol
+                                  </th>
+                              </tr>
+                          </thead>
+
+                          <tbody class="divide-y divide-gray-200 bg-white">
+
+                              {% for integrante in proyecto.integrantes.all %}
+
+                                  <tr class="hover:bg-gray-50 transition">
+
+                                      <td class="px-4 py-3 text-gray-700 text-sm">
+                                          {{ integrante.nombre }}
+                                      </td>
+
+                                      <td class="px-4 py-3">
+
+                                          {% if integrante.rol == "docente" %}
+
+                                              <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-semibold">
+                                                  Docente
+                                              </span>
+
+                                          {% elif integrante.rol == "estudiante" %}
+
+                                              <span class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-semibold">
+                                                  Estudiante
+                                              </span>
+
+                                          {% else %}
+
+                                              <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg text-xs font-semibold">
+                                                  Externo
+                                              </span>
+
+                                          {% endif %}
+
+                                      </td>
+
+                                  </tr>
+
+                              {% endfor %}
+
+                          </tbody>
+
+                      </table>
+
+                  </div>
+
+                  {% else %}
+                      <p class="text-gray-500">
+                          No existen integrantes registrados.
+                      </p>
+                  {% endif %}
+
+              </div>
+
+          </div>
+
+      </div>
+
+  </div>
+</div>
+
+{% endblock content %}

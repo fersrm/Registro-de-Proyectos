@@ -1,0 +1,253 @@
+{% extends 'components/Layout/base_extendido.html' %}
+
+{% block content_main %} 
+
+<div class="max-w-7xl mx-auto">
+
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-white">
+                Proyectos Crea Inacap - Innovación
+            </h1>
+
+            <p class="text-gray-200 mt-1">
+                Lista de proyectos registrados
+            </p>
+        </div>
+
+        <a href="{% url 'proyectos:crear' %}"
+           class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow min-w-48">
+            + Nuevo Proyecto
+        </a>
+    </div>
+
+    {% if proyectos %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+            {% for proyecto in proyectos %}
+
+                <div class="bg-white rounded-2xl shadow hover:shadow-xl transition overflow-hidden border border-gray-100">
+
+                    {% if proyecto.imagen_1 %}
+                        <img src="{{ proyecto.imagen_1.url }}"
+                             class="w-full h-52 object-cover"
+                             alt="{{ proyecto.titulo }}">
+                    {% else %}
+                        <div class="w-full h-52 bg-gray-200 flex items-center justify-center text-gray-500">
+                            Sin imagen
+                        </div>
+                    {% endif %}
+
+                    <div class="p-5">
+
+                        <div class="flex justify-between items-start gap-3">
+
+                            <h2 class="text-xl font-bold text-gray-800">
+                                {{ proyecto.titulo }}
+                            </h2>
+
+                            <span class="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full whitespace-nowrap">
+                                {{ proyecto.fecha_inicio }}
+                            </span>
+
+                        </div>
+
+                        <p class="text-sm text-gray-500 mt-2">
+                            {{ proyecto.empresa_organizacion }}
+                        </p>
+
+                        <div class="mt-4">
+                            <p class="text-gray-600 text-sm line-clamp-4">
+                                {{ proyecto.descripcion }}
+                            </p>
+                        </div>
+
+                        <div class="mt-6 flex justify-between items-center">
+
+                            <div class="w-[250px]">
+                                <p class="text-xs text-gray-400">
+                                    Docente líder
+                                </p>
+
+                                <p class="font-medium text-gray-700">
+                                    {{ proyecto.docente_lider.get_full_name|default:proyecto.docente_lider.username }}
+                                </p>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 justify-end">
+
+                              <div class="flex gap-7"> 
+                                  <a href="{% url 'proyectos:detalle' proyecto.pk %}"
+                                    class="bg-gray-800 hover:bg-black text-white px-4 py-2 rounded-lg text-sm transition w-20 text-center">
+                                      Ver
+                                  </a>
+  
+                                  <button
+                                      onclick="openQRModal('{% url 'proyectos:qr' proyecto.pk %}', '{{ proyecto.titulo|escapejs }}')"
+                                      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition w-20 text-center">
+                                      QR
+                                  </button>
+                              </div>
+
+                              <div class="flex gap-7"> 
+                                {% if user.profile.position_FK.permission_code != "RESTRICTED" or proyecto.creado_por == user %}
+                                    <a href="{% url 'proyectos:editar' proyecto.pk %}"
+                                      class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm transition w-20 text-center">
+                                        Editar
+                                    </a>
+                                {% endif %}
+                                
+                                {% if user.profile.position_FK.permission_code != "RESTRICTED" %}   
+                                  <button
+                                      onclick="openDeleteModal('{% url 'proyectos:eliminar' proyecto.pk %}', '{{ proyecto.titulo|escapejs }}')"
+                                      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition w-20 text-center">
+                                      Eliminar
+                                  </button>
+                                {% endif %}
+                              </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="bg-white rounded-xl shadow p-10 text-center">
+
+            <h2 class="text-2xl font-bold text-gray-700">
+                No existen proyectos
+            </h2>
+
+            <p class="text-gray-500 mt-2">
+                Aún no se han registrado proyectos.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- MODAL QR -->
+
+<div id="qrModal"
+     class="fixed inset-0 bg-black/60 hidden justify-center items-center z-50">
+
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-[320px] relative">
+
+        <button onclick="closeQRModal()"
+                class="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl">
+            ×
+        </button>
+
+        <h2 id="qrTitle"
+            class="text-xl font-bold text-center text-gray-800 mb-5 w-64">
+        </h2>
+
+        <div class="flex justify-center">
+
+            <img id="qrImage"
+                 src=""
+                 class="w-56 h-56 border rounded-xl shadow">
+
+        </div>
+
+        <div class="mt-5 text-center">
+
+            <a id="downloadQR"
+               href=""
+               download
+               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block">
+                Descargar QR
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="deleteModal"
+     class="fixed inset-0 bg-black/60 hidden justify-center items-center z-50">
+
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-[360px] relative">
+
+        <button onclick="closeDeleteModal()"
+                class="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl">
+            ×
+        </button>
+
+        <h2 class="text-xl font-bold text-gray-800 mb-4">
+            Confirmar eliminación
+        </h2>
+
+        <p class="text-gray-600 mb-6">
+            ¿Estás seguro que deseas eliminar el proyecto
+            <span id="deleteProjectTitle"></span>?
+        </p>
+
+        <form id="deleteForm" method="post">
+            {% csrf_token %}
+
+            <div class="flex justify-end gap-3">
+                <button type="button"
+                        onclick="closeDeleteModal()"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                    Sí, eliminar
+                </button>
+
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    function openQRModal(qrUrl, title) {
+
+        document.getElementById("qrModal").classList.remove("hidden")
+        document.getElementById("qrModal").classList.add("flex")
+
+        document.getElementById("qrImage").src = qrUrl
+        document.getElementById("downloadQR").href = qrUrl
+
+        document.getElementById("qrTitle").innerText = title
+    }
+
+    function closeQRModal() {
+
+        document.getElementById("qrModal").classList.add("hidden")
+        document.getElementById("qrModal").classList.remove("flex")
+    }
+</script>
+
+<script>
+    function openDeleteModal(deleteUrl, title) {
+        document.getElementById("deleteModal").classList.remove("hidden");
+        document.getElementById("deleteModal").classList.add("flex");
+
+        document.getElementById("deleteForm").action = deleteUrl;
+        document.getElementById("deleteProjectTitle").innerText = title;
+    }
+
+    function closeDeleteModal() {
+        document.getElementById("deleteModal").classList.add("hidden");
+        document.getElementById("deleteModal").classList.remove("flex");
+    }
+</script>
+
+{% endblock content_main %}

@@ -58,5 +58,25 @@ def handle_old_image(modelo, pk, image):
         default_storage.delete(old_profile.image.path)
 
 
+def handle_old_project_images(modelo, pk, nuevas_imagenes):
+
+    old_instance = modelo.objects.get(pk=pk)
+
+    old_images = [
+        old_instance.imagen_1,
+        old_instance.imagen_2,
+        old_instance.imagen_3,
+    ]
+
+    new_images = nuevas_imagenes
+
+    for old_img, new_img in zip(old_images, new_images):
+
+        if old_img and new_img and old_img.path != new_img.path:
+
+            if default_storage.exists(old_img.path):
+                default_storage.delete(old_img.path)
+
+
 def upload_to_s3(img, s3_path):
-    print(f"Esta en el otro archivo {img} {s3_path}")
+    print(f"EN UN FUTURO LEJANO BIEN LEJANO XD{img} {s3_path}")
