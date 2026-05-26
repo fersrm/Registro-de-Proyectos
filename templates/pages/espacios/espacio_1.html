@@ -1,0 +1,277 @@
+{% extends 'components/Layout/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+<div class="max-w-6xl mx-auto my-10 bg-white rounded-3xl shadow-xl overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="bg-gray-900 text-white p-8">
+        <div class="flex justify-between items-start gap-6">
+            <div>
+                <p class="text-red-400 font-semibold uppercase tracking-wide">
+                    Ficha resumen
+                </p>
+
+                <h1 class="text-4xl font-bold mt-2">
+                    Parcela Didáctica
+                </h1>
+
+                <p class="text-gray-300 mt-2">
+                    INACAP Sede Chillán
+                </p>
+            </div>
+
+
+            <div>
+              {% if user.is_authenticated %}
+                <div class="mb-8">
+                    <a href="{% url 'espacios:listar' %}"
+                      class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-blue-500 hover:bg-blue-50 text-gray-700 hover:text-blue-700 px-4 py-2 rounded-xl shadow-sm transition-all duration-200 group">
+                        <span class="text-lg transition-transform duration-200 group-hover:-translate-x-1">
+                          <svg width="20" height="20" fill="currentColor" class="bi bi-arrow-left-circle" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
+                          </svg>
+                        </span>
+
+                        <span class="font-medium">
+                            Volver a espacios
+                        </span>
+                    </a>
+                </div>
+              {% endif %}
+
+              <img src="{% static 'img/logo-inacap.png' %}"
+                class="h-14 w-auto object-contain bg-white rounded-lg p-2"
+                alt="INACAP">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- GALERÍA DE IMÁGENES -->
+    <div class="p-8 pb-0">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <img src="{% static 'img/espacios/parcela-1.webp' %}"
+                 alt="Parcela didáctica"
+                 class="w-full h-56 object-cover rounded-2xl shadow-sm">
+
+            <img src="{% static 'img/espacios/parcela-2.webp' %}"
+                 alt="Invernadero"
+                 class="w-full h-56 object-cover rounded-2xl shadow-sm">
+
+            <img src="{% static 'img/espacios/parcela-3.webp' %}"
+                 alt="Cultivos"
+                 class="w-full h-56 object-cover rounded-2xl shadow-sm">
+
+        </div>
+
+    </div>
+
+<!-- INFORMACIÓN GENERAL -->
+<div class="p-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-5">
+        Información general
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="bg-red-50 border border-red-100 rounded-2xl p-5">
+            <p class="text-sm text-gray-500">Dirección</p>
+            <p class="font-bold text-gray-900 mt-1">
+                Km 10 Camino a Pinto, callejón San Nicolás
+            </p>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5">
+            <p class="text-sm text-gray-500">Superficie</p>
+            <p class="font-bold text-gray-900 mt-1">
+                5,3 hectáreas
+            </p>
+        </div>
+
+        <div class="bg-green-50 border border-green-100 rounded-2xl p-5">
+            <p class="text-sm text-gray-500">Conectividad</p>
+            <p class="font-bold text-gray-900 mt-1">
+                Wi-Fi en módulos e invernadero
+            </p>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- INFRAESTRUCTURA -->
+<div class="px-8 pb-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-5">
+        Infraestructura
+    </h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <section class="border rounded-2xl p-6 shadow-sm lg:col-span-2">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">
+                Módulos
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ul class="space-y-2 text-gray-700">
+                    <li>• Caseta de guardia</li>
+                    <li>• Oficina encargado de taller</li>
+                    <li>• Sala de clases</li>
+                    <li>• Laboratorio multipropósito</li>
+                </ul>
+
+                <ul class="space-y-2 text-gray-700">
+                    <li>• Bodega de herramientas</li>
+                    <li>• Baños de damas y varones</li>
+                    <li>• Galpón de maquinaria</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="border rounded-2xl p-6 shadow-sm">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                Invernadero
+            </h3>
+
+            <p class="text-gray-700 leading-relaxed">
+                Muestra de sistemas hidropónicos y de propagación: NFT,
+                raíz flotante y bajo sustrato. Cuenta con segunda sala de bombas
+                con programador.
+            </p>
+        </section>
+
+        <section class="border rounded-2xl p-6 shadow-sm">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                Cultivos en campo
+            </h3>
+
+            <p class="text-gray-700 leading-relaxed">
+                Zona destinada a frutales mayores, berries, cultivos estacionales
+                y hortalizas a campo.
+            </p>
+        </section>
+
+        <section class="border rounded-2xl p-6 shadow-sm">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                Espacios comunes
+            </h3>
+
+            <p class="text-gray-700 leading-relaxed">
+                Pérgola/cobertizo, estacionamiento y camino central estabilizado.
+            </p>
+        </section>
+
+        <section class="border rounded-2xl p-6 shadow-sm">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                Zonas de conservación y biodiversidad
+            </h3>
+
+            <p class="text-gray-700 leading-relaxed">
+                Plantación de árboles nativos, borde de canal de riego,
+                zona ornamental, áreas verdes y compostera.
+            </p>
+        </section>
+
+    </div>
+</div>
+
+
+<!-- OTROS -->
+<div class="px-8 pb-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-5">
+        Otros
+    </h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <section class="border rounded-2xl p-6 shadow-sm">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                Seguridad
+            </h3>
+
+            <p class="text-gray-700 leading-relaxed">
+                Cierre perimetral, guardias 24/7 y sistema de cámaras de vigilancia.
+            </p>
+        </section>
+
+        <section class="border rounded-2xl p-6 shadow-sm">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                Sistema de riego
+            </h3>
+
+            <p class="text-gray-700 leading-relaxed">
+                Pozo de 37 m, sala de bombas con 4 estanques acumuladores,
+                módulo para fertirriego, riego por goteo y/o cinta en todos los cultivos.
+            </p>
+        </section>
+
+        <section class="border rounded-2xl p-6 shadow-sm bg-gray-50">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+                Proyectos asociados
+            </h3>
+
+            <p class="text-gray-700 leading-relaxed">
+                Abastecimiento de energía mediante paneles fotovoltaicos,
+                ventilación con extractores y sensorización para variables de
+                temperatura y humedad.
+            </p>
+        </section>
+
+    </div>
+</div>
+
+
+<!-- CULTIVOS Y BIODIVERSIDAD -->
+<div class="px-8 pb-8">
+
+    <section class="border rounded-2xl p-6 shadow-sm">
+        <h2 class="text-2xl font-bold text-gray-900 mb-5">
+            Cultivos y frutales en campo
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <div class="bg-white border rounded-xl p-4">
+                <p class="font-bold text-gray-900">Frutales mayores</p>
+                <p class="text-sm text-gray-600 mt-1">
+                    Cerezos, avellano europeo y manzanos.
+                </p>
+            </div>
+
+            <div class="bg-white border rounded-xl p-4">
+                <p class="font-bold text-gray-900">Berries</p>
+                <p class="text-sm text-gray-600 mt-1">
+                    Arándanos, frambuesa y frutillas.
+                </p>
+            </div>
+
+            <div class="bg-white border rounded-xl p-4">
+                <p class="font-bold text-gray-900">Cultivos estacionales</p>
+                <p class="text-sm text-gray-600 mt-1">
+                    Avena, trigo, maíz y raps.
+                </p>
+            </div>
+
+            <div class="bg-white border rounded-xl p-4">
+                <p class="font-bold text-gray-900">Hortalizas</p>
+                <p class="text-sm text-gray-600 mt-1">
+                    Habas, brócoli, acelga, repollo, lechugas y otros.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+</div>
+
+
+
+</div>
+
+{% endblock content  %}

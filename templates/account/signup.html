@@ -1,35 +1,20 @@
-{% extends "account/Layout/base_account.html" %}
-{% load tailwind_filters %}
-{% load allauth i18n %}
+{% extends "account/Layout/base_simple.html" %}
 
 {% block head_title %}
-    {% trans "Signup" %}
+    Registro cerrado
 {% endblock head_title %}
 
 {% block content_account %}
 
-  {% if user.is_superuser %}
-
-    <h1 class="max-w-2xl font-bold tracking-tight text-gray-900 text-2xl mb-4">
-      Registro de Personal:
+<div class="text-center py-10">
+    <h1 class="text-3xl font-bold text-gray-800 mb-4">
+        Registro cerrado
     </h1>
 
-    {% if not SOCIALACCOUNT_ONLY %}
-      {% element form form=form method="post" action=action_url tags="entrance,signup" %}
-          {% slot body %}
-            {% csrf_token %}
-            {{ form|crispy }}
-            {{ redirect_field }}
-          {% endslot %}
-          {% slot actions %}
-            {% include "components/btn/button_size.html" with button_text="Registrarce" button_class="prominent signup" %}
-          {% endslot %}
-      {% endelement %}
-    {% endif %}
-    {% if SOCIALACCOUNT_ENABLED %}
-      {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-    {% endif %}
-
-  {% endif %}
+    <p class="text-gray-500">
+        La creación de cuentas se encuentra deshabilitada.
+        Solo un administrador puede crear usuarios desde el panel interno.
+    </p>
+</div>
 
 {% endblock content_account %}

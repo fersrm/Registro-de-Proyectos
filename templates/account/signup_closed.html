@@ -1,13 +1,21 @@
-{% extends 'components/Layout/base.html' %}
-{% load allauth %}
+{% extends "account/Layout/base_simple.html" %}
 
 {% block head_title %}
-    {% trans "Sign Up Closed" %}
+    Registro Cerrado
 {% endblock head_title %}
 
-{% block content %}
+{% block content_account %}
 
-  <h1>{% trans "Sign Up Closed" %}</h1>
-  <p>{% trans "We are sorry, but the sign up is currently closed." %}</p>
+<div class="text-center py-10">
 
-{% endblock content %}
+    <h1 class="text-3xl font-bold text-gray-800 mb-4">
+        Registro Cerrado
+    </h1>
+
+    <p class="text-gray-500">
+        El registro de usuarios se encuentra deshabilitado.
+    </p>
+
+</div>
+
+{% endblock content_account %}

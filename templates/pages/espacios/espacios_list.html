@@ -1,0 +1,175 @@
+{% extends 'components/Layout/base_extendido.html' %}
+{% load static %}
+
+{% block content_main %}
+
+<div class="max-w-7xl mx-auto">
+
+    <div class="flex justify-between items-center mb-8">
+
+        <div>
+            <h1 class="text-3xl font-bold text-white">
+                Espacios
+            </h1>
+
+            <p class="text-gray-200 mt-1">
+                Lista de espacios disponibles
+            </p>
+        </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+        {% for espacio in espacios %}
+
+            <div class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 border border-gray-100 group">
+
+              <!-- IMAGEN -->
+              <div class="relative overflow-hidden">
+
+                  <img src="{% static espacio.imagen %}"
+                      class="w-full h-60 object-cover group-hover:scale-105 transition duration-500"
+                      alt="{{ espacio.nombre }}">
+
+                  <!-- Overlay -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent">
+                  </div>
+
+                  <!-- Badge -->
+                  <div class="absolute top-4 left-4">
+                      <span class="bg-white/90 backdrop-blur text-gray-800 text-xs font-semibold px-3 py-1 rounded-full shadow">
+                          Espacio académico
+                      </span>
+                  </div>
+
+              </div>
+
+              <!-- CONTENIDO -->
+              <div class="p-6">
+
+                  <!-- TÍTULO -->
+                  <div class="mb-3">
+
+                      <h2 class="text-2xl font-bold text-gray-900 leading-tight">
+                          {{ espacio.nombre }}
+                      </h2>
+
+                      <p class="text-sm text-gray-500 mt-1">
+                          INACAP Sede Chillán
+                      </p>
+
+                  </div>
+
+                  <!-- DESCRIPCIÓN -->
+                  <p class="text-gray-600 text-sm leading-relaxed line-clamp-4">
+                      {{ espacio.descripcion }}
+                  </p>
+
+                  <!-- DATOS -->
+                  <div class="grid grid-cols-2 gap-3 mt-5">
+
+                      <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                          <p class="text-xs text-gray-500">
+                              Ubicación
+                          </p>
+
+                          <p class="text-sm font-semibold text-gray-800 mt-1">
+                              Camino a Pinto
+                          </p>
+                      </div>
+
+                      <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                          <p class="text-xs text-gray-500">
+                              Superficie
+                          </p>
+
+                          <p class="text-sm font-semibold text-gray-800 mt-1">
+                              5,3 ha
+                          </p>
+                      </div>
+
+                  </div>
+
+                  <!-- BOTONES -->
+                  <div class="grid grid-cols-2 gap-3 mt-6">
+
+                      <a href="{% url espacio.url_name %}"
+                        class="bg-gray-900 hover:bg-black text-white text-center py-3 rounded-xl font-medium transition">
+
+                          Ver espacio
+
+                      </a>
+
+                      <button
+                          onclick="openQRModal('{% url 'espacios:qr' espacio.id %}', '{{ espacio.nombre|escapejs }}')"
+                          class="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition">
+
+                          QR
+
+                      </button>
+
+                  </div>
+
+              </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+<!-- MODAL QR -->
+<div id="qrModal"
+     class="fixed inset-0 bg-black/60 hidden justify-center items-center z-50">
+
+    <div class="bg-white rounded-2xl shadow-2xl p-6 w-[320px] relative">
+
+        <button onclick="closeQRModal()"
+                class="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl">
+            ×
+        </button>
+
+        <h2 id="qrTitle"
+            class="text-xl font-bold text-center text-gray-800 mb-5">
+        </h2>
+
+        <div class="flex justify-center">
+            <img id="qrImage"
+                 src=""
+                 class="w-56 h-56 border rounded-xl shadow">
+        </div>
+
+        <div class="mt-5 text-center">
+            <a id="downloadQR"
+               href=""
+               download
+               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block">
+                Descargar QR
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function openQRModal(qrUrl, title) {
+        document.getElementById("qrModal").classList.remove("hidden")
+        document.getElementById("qrModal").classList.add("flex")
+
+        document.getElementById("qrImage").src = qrUrl
+        document.getElementById("downloadQR").href = qrUrl
+        document.getElementById("qrTitle").innerText = title
+    }
+
+    function closeQRModal() {
+        document.getElementById("qrModal").classList.add("hidden")
+        document.getElementById("qrModal").classList.remove("flex")
+    }
+</script>
+
+{% endblock content_main %}

@@ -6,7 +6,7 @@
   {% trans 'E-mail Addresses' %}
 {% endblock %}
 
-{% block content %}
+{% block content_account %}
 
   <h1 class="max-w-2xl font-bold tracking-tight text-gray-900 text-2xl mb-4">{% trans 'E-mail Addresses' %}</h1>
 
@@ -20,27 +20,27 @@
         {% csrf_token %}
         {% for radio in emailaddress_radios %}
           {% with emailaddress=radio.emailaddress %}
+          <div class="flex gap-4 email-reenvio">
             {% element field type='radio' checked=radio.checked name='email' value=emailaddress.email id=radio.id %}
               {% slot label %}
                 {{ emailaddress.email }}
-                <div class="flex gap-4">
-                  {% if emailaddress.verified %}
-                    {% element badge tags='success,email,verified' %}
-                      <span class="verified font-bold">{% translate 'Verified' %}</span>
-                    {% endelement %}
-                  {% else %}
-                    {% element badge tags='warning,email,unverified' %}
-                      <span class="unverified font-bold">{% translate 'Unverified' %}</span>
-                    {% endelement %}
-                  {% endif %}  
-                  {% if emailaddress.primary %}
-                    {% element badge tags='email,primary' %}
-                      <span class="unverified font-bold">{% translate 'Primary' %}</span>
-                    {% endelement %}
-                  {% endif %}
-                </div>  
+                    {% if emailaddress.verified %}
+                      {% element badge tags='success,email,verified' %}
+                        <span class="verified font-bold">{% translate 'Verified' %}</span>
+                      {% endelement %}
+                    {% else %}
+                      {% element badge tags='warning,email,unverified' %}
+                        <span class="unverified font-bold">{% translate 'Unverified' %}</span>
+                      {% endelement %}
+                    {% endif %}  
+                    {% if emailaddress.primary %}
+                      {% element badge tags='email,primary' %}
+                        <span class="unverified font-bold">{% translate 'Primary' %}</span>
+                      {% endelement %}
+                    {% endif %}
               {% endslot %}
             {% endelement %}
+          </div>  
           {% endwith %}
         {% endfor %}
       {% endslot %}

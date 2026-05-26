@@ -34,6 +34,7 @@ LOCAL_APPS = [
     "homeApp",
     "UsuarioApp",
     "ProyectosApp",
+    "EspaciosApp",
 ]
 
 THIRD_APPS = [
@@ -204,6 +205,7 @@ ACCOUNT_LOGOUT_ON_GET = True
 SESSION_COOKIE_AGE = 1800  # 20 minutes in seconds
 
 LOGIN_URL = "account_login"
+ACCOUNT_ADAPTER = "UsuarioApp.adapters.NoSignupAccountAdapter"
 
 # -----------------------------------------------
 

@@ -1,0 +1,27 @@
+{% extends 'components/Layout/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex min-h-screen items-center justify-center px-6">
+    <div class="text-center">
+        <img src="{% static 'img/logo.svg' %}" class="mx-auto h-24 mb-6" alt="Logo">
+
+        <h1 class="text-7xl font-bold text-indigo-600">404</h1>
+
+        <h2 class="mt-4 text-2xl font-semibold text-gray-200">
+            Página no encontrada
+        </h2>
+
+        <p class="mt-3 text-gray-400 max-w-md">
+            La página que intentas visitar no existe o fue movida.
+        </p>
+
+        <div class="mt-8">
+            <a href="/"
+               class="rounded-md bg-indigo-600 px-5 py-3 text-white font-semibold hover:bg-indigo-500 transition">
+                Volver al inicio
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

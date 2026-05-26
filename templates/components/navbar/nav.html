@@ -39,6 +39,15 @@
           </a>
         </li> 
 
+        <li>
+          <a href="{% url 'espacios:listar' %}" class=" group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold {% if request.path == '/espacios/' %}text-white bg-gray-800 {% else %}  text-gray-400 hover:text-white hover:bg-gray-800 {% endif %}">
+            <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+            </svg>
+            Espacios
+          </a>
+        </li> 
+
         <div class="text-xs font-semibold leading-6 text-gray-400">Tus Configuraciones</div>
       <ul class="-mx-2 mt-2 space-y-1">
         <li>
