@@ -178,3 +178,40 @@ strong {
   accent-color: #2563eb;
   cursor: pointer;
 }
+
+/* Recursos adicionales - input file */
+#recursos-container input[type="file"][name$="-archivo"] {
+  width: 100%;
+  border: 2px dashed #cbd5e1;
+  border-radius: 0.9rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+#recursos-container input[type="file"][name$="-archivo"]:hover {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+/* Botón interno */
+#recursos-container input[type="file"][name$="-archivo"]::file-selector-button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover botón interno */
+#recursos-container
+  input[type="file"][name$="-archivo"]::file-selector-button:hover {
+  background-color: #1d4ed8;
+}

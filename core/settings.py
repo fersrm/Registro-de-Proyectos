@@ -14,7 +14,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = False
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
@@ -226,7 +226,7 @@ AXES_FAILURE_LIMIT = 3
 AXES_COOLOFF_TIME = delta
 AXES_RESET_ON_SUCCESS = True  # restablecerá el número de inicios de sesión fallidos
 AXES_ENABLE_ACCESS_FAILURE_LOG = True
-AXES_LOCK_OUT_AT_FAILURE = True  # bloquea al usuario
+AXES_LOCK_OUT_AT_FAILURE = False  # bloquea al usuario
 
 # ------------------------------------------
 if not DEBUG:

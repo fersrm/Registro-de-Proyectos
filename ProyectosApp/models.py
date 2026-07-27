@@ -12,6 +12,14 @@ def proyecto_image_path(instance, filename):
     return f"proyectos/{proyecto_id}/{random_filename}{extension}"
 
 
+def recurso_proyecto_path(instance, filename):
+    extension = os.path.splitext(filename)[1].lower()
+    random_filename = uuid.uuid4().hex
+    proyecto_id = instance.proyecto.pk if instance.proyecto_id else "temp"
+
+    return f"proyectos/{proyecto_id}/recursos/{random_filename}{extension}"
+
+
 class Proyecto(models.Model):
 
     TRL_CHOICES = [
@@ -107,3 +115,28 @@ class IntegranteProyecto(models.Model):
 
     class Meta:
         ordering = ["rol", "nombre"]
+
+
+class RecursoProyecto(models.Model):
+
+    proyecto = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE, related_name="recursos"
+    )
+
+    titulo = models.CharField(max_length=150)
+
+    archivo = models.FileField(upload_to=recurso_proyecto_path, blank=True, null=True)
+
+    url = models.URLField(blank=True, null=True)
+
+    descripcion = models.CharField(max_length=250, blank=True, null=True)
+
+    creado = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.titulo} - {self.get_tipo_display()}"
+
+    class Meta:
+        ordering = [
+            "titulo",
+        ]

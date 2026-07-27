@@ -8,7 +8,7 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from django.db import transaction
 from .models import Proyecto
-from .forms import ProyectoForm, IntegranteProyectoFormSet
+from .forms import ProyectoForm, IntegranteProyectoFormSet, RecursoProyectoFormSet
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from core.mixins import PermitsPositionMixin
 from django.core.exceptions import PermissionDenied
@@ -69,14 +69,21 @@ class ProyectoCreateView(LoginRequiredMixin, CreateView):
             context["formset"] = IntegranteProyectoFormSet(
                 self.request.POST, instance=self.object
             )
+
+            context["recurso_formset"] = RecursoProyectoFormSet(
+                self.request.POST, self.request.FILES, instance=self.object
+            )
+
         else:
             context["formset"] = IntegranteProyectoFormSet(instance=self.object)
 
+            context["recurso_formset"] = RecursoProyectoFormSet(instance=self.object)
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
         formset = context["formset"]
+        recurso_formset = context["recurso_formset"]
 
         with transaction.atomic():
             self.object = form.save(commit=False)
@@ -84,36 +91,16 @@ class ProyectoCreateView(LoginRequiredMixin, CreateView):
             self.object.modificado_por = self.request.user
             self.object.save()
 
-            if formset.is_valid():
+            if formset.is_valid() and recurso_formset.is_valid():
                 formset.instance = self.object
                 formset.save()
+
+                recurso_formset.instance = self.object
+                recurso_formset.save()
             else:
                 return self.form_invalid(form)
 
         return super().form_valid(form)
-
-
-#### QR ######################################################
-import qrcode
-from io import BytesIO
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-
-
-def proyecto_qr_view(request, pk):
-    proyecto = get_object_or_404(Proyecto, pk=pk)
-
-    url = request.build_absolute_uri(f"/proyectos/{proyecto.pk}/")
-
-    qr = qrcode.make(url)
-
-    buffer = BytesIO()
-    qr.save(buffer, format="PNG")
-
-    return HttpResponse(buffer.getvalue(), content_type="image/png")
-
-
-###############################################################
 
 
 class ProyectoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -146,23 +133,34 @@ class ProyectoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             context["formset"] = IntegranteProyectoFormSet(
                 self.request.POST, instance=self.object
             )
+
+            context["recurso_formset"] = RecursoProyectoFormSet(
+                self.request.POST, self.request.FILES, instance=self.object
+            )
+
         else:
             context["formset"] = IntegranteProyectoFormSet(instance=self.object)
+
+            context["recurso_formset"] = RecursoProyectoFormSet(instance=self.object)
 
         return context
 
     def form_valid(self, form):
         context = self.get_context_data()
         formset = context["formset"]
+        recurso_formset = context["recurso_formset"]
 
         with transaction.atomic():
             self.object = form.save(commit=False)
             self.object.modificado_por = self.request.user
             self.object.save()
 
-            if formset.is_valid():
+            if formset.is_valid() and recurso_formset.is_valid():
                 formset.instance = self.object
                 formset.save()
+
+                recurso_formset.instance = self.object
+                recurso_formset.save()
             else:
                 return self.form_invalid(form)
 
@@ -172,3 +170,26 @@ class ProyectoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class ProyectoDeleteView(LoginRequiredMixin, PermitsPositionMixin, DeleteView):
     model = Proyecto
     success_url = reverse_lazy("proyectos:listar")
+
+
+#### QR ######################################################
+import qrcode
+from io import BytesIO
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+
+
+def proyecto_qr_view(request, pk):
+    proyecto = get_object_or_404(Proyecto, pk=pk)
+
+    url = request.build_absolute_uri(f"/proyectos/{proyecto.pk}/")
+
+    qr = qrcode.make(url)
+
+    buffer = BytesIO()
+    qr.save(buffer, format="PNG")
+
+    return HttpResponse(buffer.getvalue(), content_type="image/png")
+
+
+###############################################################

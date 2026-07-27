@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from .models import Proyecto, IntegranteProyecto
+from .models import Proyecto, IntegranteProyecto, RecursoProyecto
 from django.core.exceptions import ValidationError
 import os
 
@@ -25,6 +25,26 @@ def validar_imagen(imagen):
 
     if imagen.size > limite_mb * 1024 * 1024:
         raise ValidationError(f"La imagen no puede superar {limite_mb} MB.")
+
+
+def validar_recurso_archivo(archivo):
+
+    if not archivo:
+        return
+
+    formatos_validos = [".jpg", ".jpeg", ".png", ".webp", ".mp4", ".mov", ".webm"]
+
+    extension = os.path.splitext(archivo.name)[1].lower()
+
+    if extension not in formatos_validos:
+        raise ValidationError(
+            "Formato no permitido. Use imágenes JPG, PNG, WEBP o videos MP4, MOV, WEBM."
+        )
+
+    limite_mb = 30
+
+    if archivo.size > limite_mb * 1024 * 1024:
+        raise ValidationError(f"El recurso no puede superar {limite_mb} MB.")
 
 
 class ProyectoForm(forms.ModelForm):
@@ -154,4 +174,45 @@ class IntegranteProyectoForm(forms.ModelForm):
 
 IntegranteProyectoFormSet = inlineformset_factory(
     Proyecto, IntegranteProyecto, form=IntegranteProyectoForm, extra=1, can_delete=True
+)
+
+
+class RecursoProyectoForm(forms.ModelForm):
+    class Meta:
+        model = RecursoProyecto
+        fields = [
+            "titulo",
+            "archivo",
+            "url",
+            "descripcion",
+        ]
+
+        widgets = {
+            "descripcion": forms.TextInput(
+                attrs={"placeholder": "Breve descripción del recurso"}
+            ),
+            "url": forms.URLInput(attrs={"placeholder": "https://..."}),
+        }
+
+    def clean_archivo(self):
+        archivo = self.cleaned_data.get("archivo")
+        validar_recurso_archivo(archivo)
+        return archivo
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        archivo = cleaned_data.get("archivo")
+        url = cleaned_data.get("url")
+
+        if not archivo and not url:
+            raise ValidationError(
+                "Debe ingresar un recurso válido: archivo, enlace o ambos."
+            )
+
+        return cleaned_data
+
+
+RecursoProyectoFormSet = inlineformset_factory(
+    Proyecto, RecursoProyecto, form=RecursoProyectoForm, extra=1, can_delete=True
 )

@@ -51,11 +51,64 @@
             + Agregar integrante
         </button>
 
+        <hr class="my-8">
+
+        <h2 class="text-xl font-semibold mb-4">
+            Recursos adicionales
+        </h2>
+
+        <p class="text-sm text-gray-500 mb-4">
+            Puede agregar imágenes, videos cortos o enlaces externos relacionados con el proyecto.
+        </p>
+
+        {{ recurso_formset.management_form }}
+
+        <div id="recursos-container" class="space-y-4">
+            {% for recurso_form in recurso_formset %}
+                <div class="recurso-form grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 border p-4 rounded-xl bg-gray-50">
+
+                    {{ recurso_form.id }}
+
+                    <div class="md:col-span-2">
+                        {{ recurso_form.titulo|as_crispy_field }}
+                    </div>
+
+                    <div class="md:col-span-3">
+                        {{ recurso_form.archivo|as_crispy_field }}
+                    </div>
+
+                    <div class="md:col-span-5">
+                        {{ recurso_form.url|as_crispy_field }}
+                    </div>
+
+                    <div class="md:col-span-5">
+                        {{ recurso_form.descripcion|as_crispy_field }}
+                    </div>
+
+                    <div class="flex items-center">
+                        {% if recurso_form.DELETE %}
+                            {{ recurso_form.DELETE }}
+                            <span class="ml-2 text-sm text-red-600">Eliminar</span>
+                        {% endif %}
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button"
+                id="add-recurso"
+                class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Agregar recurso
+        </button>
+
         <div class="mt-8">
           {% include "components/btn/button.html" with button_text="Guardar cambios" %}
         </div>
     </form>
 </div>
+
+{% include 'components/mensajes.html' %}  
 
 <script>
     const addButton = document.getElementById("add-integrante");
@@ -94,6 +147,37 @@
     });
 </script>
 
+<script>
+    const addRecursoButton = document.getElementById("add-recurso");
+    const recursosContainer = document.getElementById("recursos-container");
+    const totalRecursosForms = document.getElementById("id_recursos-TOTAL_FORMS");
+
+    addRecursoButton.addEventListener("click", function () {
+        const currentFormCount = parseInt(totalRecursosForms.value);
+        const firstForm = document.querySelector(".recurso-form");
+        const newForm = firstForm.cloneNode(true);
+
+        newForm.innerHTML = newForm.innerHTML.replaceAll(
+            `recursos-${currentFormCount - 1}`,
+            `recursos-${currentFormCount}`
+        );
+
+        const inputs = newForm.querySelectorAll("input, select, textarea");
+
+        inputs.forEach(input => {
+            if (input.type !== "hidden") {
+                input.value = "";
+            }
+
+            if (input.type === "checkbox") {
+                input.checked = false;
+            }
+        });
+
+        recursosContainer.appendChild(newForm);
+        totalRecursosForms.value = currentFormCount + 1;
+    });
+</script>
 
 <script>
     function crearContadorTextarea(textareaId, minCaracteres, contadorId) {
