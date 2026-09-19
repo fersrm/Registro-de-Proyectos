@@ -11,12 +11,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = ")+bj9df-lv@5jpxhec3cbjfk3i-w!xn-dsnqv3zw1u0+qv$4o7"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+ALLOWED_HOSTS = ["agroinnova.informaticachillan.com","10.201.24.88","127.0.0.1","localhost",]
+
+CSRF_TRUSTED_ORIGINS = ["https://agroinnova.informaticachillan.com",]
 
 # Application definition
 
@@ -55,9 +57,9 @@ INSTALLED_APPS = DEFAULT_DJANGO_APPS + LOCAL_APPS + THIRD_APPS
 
 TAILWIND_APP_NAME = "theme"
 
-INTERNAL_IPS = env.list("INTERNAL_IPS", default=[])
+INTERNAL_IPS = ["127.0.0.1",]
 
-NPM_BIN_PATH = os.environ.get("NPM_BIN_PATH")
+NPM_BIN_PATH = ""
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 
