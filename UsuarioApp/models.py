@@ -57,7 +57,9 @@ class Profile(models.Model):
             crop_image(self.image.path, 300)
 
     def update_last_activity(self):
-        self.save(update_last_activity=True)
+        # Actualizar actividad no debe volver a abrir ni recortar la fotografía.
+        self.last_activity = timezone.now()
+        type(self).objects.filter(pk=self.pk).update(last_activity=self.last_activity)
 
     class Meta:
         verbose_name = "Perfil"

@@ -1,7 +1,8 @@
+{% load static %}
 <div class="mb-3">
   <div class="block text-gray-700 text-sm font-bold mb-2">Foto Perfil</div>
   <div class="mt-2 flex items-center gap-x-3">
-    <img src="{{ img }}" class="w-20 h-20 rounded-full" alt="Foto de Perfil">
+    <img src="{% if img and profile_form.instance.image.name != 'profile.webp' %}{{ img }}{% else %}{% static 'img/profile.webp' %}{% endif %}" class="w-20 h-20 rounded-full" alt="Foto de Perfil">
     <!-- Campo de entrada de archivo oculto -->
     {{ profile_form.image }}
     <!-- Botón para abrir el selector de archivos -->

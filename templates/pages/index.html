@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block content_main %} 
-
+          
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
 
       <!-- CARD CANTIDAD -->
@@ -126,82 +126,55 @@
 
   </div>
 
-  <!-- Activity list -->
-  <div class="border-t border-white/10 pt-11">
-    <h2 class="px-4 text-base font-semibold leading-7 text-white sm:px-6 lg:px-8">Últimos usuarios conectados</h2>
-    <table aria-labelledby="tablaUsuarios" aria-describedby="tablaUsuariosConectados" class="mt-6 w-full whitespace-nowrap text-left">
-      <colgroup>
-        <col class="w-full sm:w-4/12">
-        <col class="lg:w-4/12">
-        <col class="lg:w-2/12">
-        <col class="lg:w-1/12">
-        <col class="lg:w-1/12">
-      </colgroup>
-      <thead class="border-b border-white/10 text-sm leading-6 text-white">
-        <tr>
-          <th scope="col" class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">Usuario</th>
-          <th scope="col" class="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell">Correo</th>
-          <th scope="col" class="hidden py-2 pl-0 pr-4 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20 sm:table-cell">Cargo</th>
-          <th scope="col" class="py-2 pl-0 pr-4 text-right font-semibold sm:pr-6 lg:pr-8">Última conexión</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-white/5">
-
-        {% if object_list  %}
-          {% for user in object_list  %}
-          
-            <tr>
-              <td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-                <div class="flex items-center gap-x-4">
-                  <img src="{{ user.profile.image.url }}" alt="perfil" class="h-8 w-8 rounded-full bg-gray-800">
-                  <div class="truncate text-sm font-medium leading-6 text-white">{{ user.username }}</div>
+  <!-- Actividad de usuarios del sistema: no depende del filtro de evento -->
+  <section aria-labelledby="tablaUsuarios" class="min-w-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+    <header class="flex flex-wrap items-start justify-between gap-3 border-b border-gray-100 p-5 sm:p-6">
+      <div><h2 id="tablaUsuarios" class="text-lg font-bold text-gray-900">Últimos usuarios que iniciaron sesión</h2><p id="tablaUsuariosConectados" class="mt-2 text-sm text-gray-500">Actividad del sistema completo · últimos cinco accesos de cuentas habilitadas.</p></div>
+      <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800">{{ usuarios_con_actividad }} con actividad reciente</span>
+    </header>
+    <p class="px-5 py-3 text-xs text-gray-500 lg:hidden">Desliza la tabla para ver el cargo y la actividad.</p>
+    <div role="region" aria-labelledby="tablaUsuarios" tabindex="0" class="overflow-x-auto focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500">
+      <table aria-describedby="tablaUsuariosConectados" class="w-full min-w-[720px] text-left text-sm">
+        <thead class="border-b border-gray-200 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+          <tr><th scope="col" class="px-6 py-4">Usuario</th><th scope="col" class="px-4 py-4">Cargo</th><th scope="col" class="px-4 py-4">Último acceso</th><th scope="col" class="px-6 py-4">Actividad</th></tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for usuario in usuarios_recientes %}
+            <tr class="hover:bg-gray-50">
+              <th scope="row" class="px-6 py-4 text-left font-normal">
+                <div class="flex items-center gap-3">
+                  <img src="{% if usuario.profile.image and usuario.profile.image.name != 'profile.webp' %}{{ usuario.profile.image.url }}{% else %}{% static 'img/profile.webp' %}{% endif %}" alt="" width="40" height="40" class="h-10 w-10 shrink-0 rounded-full bg-gray-100 object-cover">
+                  <div><p class="font-semibold text-gray-900">{{ usuario.username }}</p><p class="mt-1 text-xs text-gray-500">{{ usuario.get_full_name|default:'Sin nombre registrado' }}</p></div>
                 </div>
+              </th>
+              <td class="px-4 py-4">
+                <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">{% if usuario.is_superuser %}Superusuario{% else %}{{ usuario.profile.position_FK.user_position|default:'Sin cargo' }}{% endif %}</span>
               </td>
-              <td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
-                <div class="flex gap-x-3">
-                  <div class="font-mono text-sm leading-6 text-gray-400">{{ user.email }}</div>
-                </div>
-              </td>
-              <td class="hidden py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20 sm:table-cell">
-
-                <div class="flex items-center justify-end gap-x-2 sm:justify-start">
-                  <div class="hidden text-white sm:block">
-                    {% if user.profile.position_FK.permission_code != "RESTRICTED" %}
-                      <span class="inline-flex flex-shrink-0 items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                        {{ user.profile.position_FK.user_position }}
-                      </span>
-                    {% else %}
-                      <span class="inline-flex flex-shrink-0 items-center rounded-full bg-red-50 px-1.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-green-600/20">
-                          {{ user.profile.position_FK.user_position }}
-                      </span> 
-                    {% endif %}
-                  </div>
-                </div>
-
-              </td>
-              <td class="py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-400 sm:pr-6 lg:pr-8">
-              
-                  {% if user.id in active_users %}
-                    <div class="flex items-center justify-end gap-x-2 sm:justify-end">
-                    <div class="flex-none rounded-full p-1 text-green-400 bg-green-400/10">
-                      <div class="h-1.5 w-1.5 rounded-full bg-current"></div>
-                    </div>
-                    <div class=" text-white ">Activo</div>
-                  </div>
-                  {% else %}
-                      {{ user.profile.last_activity|naturaltime }}
-                  {% endif %}
-            
+              <td class="whitespace-nowrap px-4 py-4 tabular-nums text-gray-600"><time datetime="{{ usuario.last_login|date:'c' }}">{{ usuario.last_login|date:'d/m/Y H:i' }}</time></td>
+              <td class="px-6 py-4">
+                {% if usuario.pk in active_users %}
+                  <span class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700"><span aria-hidden="true" class="h-2 w-2 rounded-full bg-emerald-500"></span>Actividad reciente</span>
+                {% else %}
+                  <span class="text-xs text-gray-500">{% if usuario.profile.last_activity %}{{ usuario.profile.last_activity|naturaltime }}{% else %}Sin registro de actividad{% endif %}</span>
+                {% endif %}
               </td>
             </tr>
-            
-          {% endfor %} 
-        {% endif %} 
-
-      </tbody>
-    </table>
-  </div>
+          {% empty %}
+            <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500">No hay accesos registrados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="border-t border-gray-100 px-5 py-4 text-xs leading-5 text-gray-500 sm:px-6">Actividad reciente: registro durante los últimos {{ actividad_minutos }} minutos. Es una aproximación; no confirma que el usuario siga conectado.</p>
+  </section>
 
   {% include 'components/mensajes.html' %}
 
 {% endblock content_main %}
+
+{% block javascript %}
+
+  <script defer src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
+  <script defer src="{% static 'js/grafico_home.js' %}"></script>
+
+{% endblock javascript %}

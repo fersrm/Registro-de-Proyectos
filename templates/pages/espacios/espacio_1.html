@@ -52,25 +52,106 @@
     </div>
 
     <!-- GALERÍA DE IMÁGENES -->
-    <div class="p-8 pb-0">
+<!-- GALERÍA DE IMÁGENES -->
+<div class="p-8 pb-0">
+    <div
+        id="galeria"
+        class="grid grid-cols-1 gap-4 md:grid-cols-3"
+    >
+        <button
+            type="button"
+            class="group overflow-hidden rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
+            data-gallery-image
+        >
+            <img
+                src="{% static 'img/espacios/parcela-1.webp' %}"
+                alt="Parcela didáctica"
+                class="h-56 w-full cursor-zoom-in object-cover shadow-sm transition duration-300 group-hover:scale-105"
+            >
+        </button>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button
+            type="button"
+            class="group overflow-hidden rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
+            data-gallery-image
+        >
+            <img
+                src="{% static 'img/espacios/parcela-2.webp' %}"
+                alt="Invernadero"
+                class="h-56 w-full cursor-zoom-in object-cover shadow-sm transition duration-300 group-hover:scale-105"
+            >
+        </button>
 
-            <img src="{% static 'img/espacios/parcela-1.webp' %}"
-                 alt="Parcela didáctica"
-                 class="w-full h-56 object-cover rounded-2xl shadow-sm">
-
-            <img src="{% static 'img/espacios/parcela-2.webp' %}"
-                 alt="Invernadero"
-                 class="w-full h-56 object-cover rounded-2xl shadow-sm">
-
-            <img src="{% static 'img/espacios/parcela-3.webp' %}"
-                 alt="Cultivos"
-                 class="w-full h-56 object-cover rounded-2xl shadow-sm">
-
-        </div>
-
+        <button
+            type="button"
+            class="group overflow-hidden rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
+            data-gallery-image
+        >
+            <img
+                src="{% static 'img/espacios/parcela-3.webp' %}"
+                alt="Cultivos"
+                class="h-56 w-full cursor-zoom-in object-cover shadow-sm transition duration-300 group-hover:scale-105"
+            >
+        </button>
     </div>
+</div>
+
+<!-- VISOR DE IMÁGENES -->
+<div
+    id="visor-imagenes"
+    class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/90 p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Galería ampliada"
+    aria-hidden="true"
+>
+    <!-- Cerrar -->
+    <button
+        id="cerrar-visor"
+        type="button"
+        class="absolute right-5 top-5 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-4xl text-white transition hover:bg-white/30"
+        aria-label="Cerrar galería"
+    >
+        &times;
+    </button>
+
+    <!-- Imagen anterior -->
+    <button
+        id="imagen-anterior"
+        type="button"
+        class="absolute left-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-4xl text-white transition hover:bg-white/30 md:left-8"
+        aria-label="Imagen anterior"
+    >
+        &#8249;
+    </button>
+
+    <!-- Imagen ampliada -->
+    <div class="flex max-h-full max-w-6xl flex-col items-center">
+        <img
+            id="imagen-ampliada"
+            src=""
+            alt=""
+            class="max-h-[82vh] max-w-full rounded-xl object-contain shadow-2xl"
+        >
+
+        <div class="mt-4 text-center text-white">
+            <p id="descripcion-imagen" class="font-medium"></p>
+            <p id="contador-imagen" class="mt-1 text-sm text-white/70"></p>
+        </div>
+    </div>
+
+    <!-- Imagen siguiente -->
+    <button
+        id="imagen-siguiente"
+        type="button"
+        class="absolute right-3 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-4xl text-white transition hover:bg-white/30 md:right-8"
+        aria-label="Imagen siguiente"
+    >
+        &#8250;
+    </button>
+</div>
+
+
 
 <!-- INFORMACIÓN GENERAL -->
 <div class="p-8">
@@ -273,5 +354,94 @@
 
 
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const miniaturas = Array.from(
+            document.querySelectorAll("[data-gallery-image] img")
+        );
+
+        const visor = document.getElementById("visor-imagenes");
+        const imagenAmpliada = document.getElementById("imagen-ampliada");
+        const descripcion = document.getElementById("descripcion-imagen");
+        const contador = document.getElementById("contador-imagen");
+
+        const botonCerrar = document.getElementById("cerrar-visor");
+        const botonAnterior = document.getElementById("imagen-anterior");
+        const botonSiguiente = document.getElementById("imagen-siguiente");
+
+        let indiceActual = 0;
+
+        function mostrarImagen(indice) {
+            indiceActual = (indice + miniaturas.length) % miniaturas.length;
+
+            const imagen = miniaturas[indiceActual];
+
+            imagenAmpliada.src = imagen.src;
+            imagenAmpliada.alt = imagen.alt;
+            descripcion.textContent = imagen.alt;
+            contador.textContent = `${indiceActual + 1} de ${miniaturas.length}`;
+        }
+
+        function abrirVisor(indice) {
+            mostrarImagen(indice);
+
+            visor.classList.remove("hidden");
+            visor.classList.add("flex");
+            visor.setAttribute("aria-hidden", "false");
+
+            document.body.classList.add("overflow-hidden");
+            botonCerrar.focus();
+        }
+
+        function cerrarVisor() {
+            visor.classList.add("hidden");
+            visor.classList.remove("flex");
+            visor.setAttribute("aria-hidden", "true");
+
+            document.body.classList.remove("overflow-hidden");
+        }
+
+        miniaturas.forEach(function (imagen, indice) {
+            imagen.parentElement.addEventListener("click", function () {
+                abrirVisor(indice);
+            });
+        });
+
+        botonAnterior.addEventListener("click", function () {
+            mostrarImagen(indiceActual - 1);
+        });
+
+        botonSiguiente.addEventListener("click", function () {
+            mostrarImagen(indiceActual + 1);
+        });
+
+        botonCerrar.addEventListener("click", cerrarVisor);
+
+        visor.addEventListener("click", function (event) {
+            if (event.target === visor) {
+                cerrarVisor();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (visor.classList.contains("hidden")) {
+                return;
+            }
+
+            if (event.key === "Escape") {
+                cerrarVisor();
+            }
+
+            if (event.key === "ArrowLeft") {
+                mostrarImagen(indiceActual - 1);
+            }
+
+            if (event.key === "ArrowRight") {
+                mostrarImagen(indiceActual + 1);
+            }
+        });
+    });
+</script>
 
 {% endblock content  %}

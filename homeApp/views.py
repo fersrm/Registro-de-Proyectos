@@ -1,40 +1,60 @@
-from django.views.generic import ListView
+from datetime import timedelta
+
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.db.models import Q
 from django.utils import timezone
+from django.views.generic import ListView
+
 from UsuarioApp.models import Profile
 from ProyectosApp.models import Proyecto
+
+User = get_user_model()
 
 
 class HomeView(LoginRequiredMixin, ListView):
     model = User
     template_name = "pages/index.html"
+    context_object_name = "usuarios_recientes"
+
+    ACTIVIDAD_MINUTOS = 10
 
     def get_queryset(self):
-        last_connected_users = User.objects.filter(
-            Q(last_login__isnull=False)
-        ).order_by("-last_login")[:5]
-
-        return last_connected_users
+        return (
+            User.objects.filter(
+                is_active=True,
+                last_login__isnull=False,
+            )
+            .select_related("profile__position_FK")
+            .order_by("-last_login", "-pk")[:5]
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        recent_activity_cutoff = timezone.now() - timezone.timedelta(minutes=2)
+        ahora = timezone.now()
+        limite_actividad = ahora - timedelta(
+            minutes=self.ACTIVIDAD_MINUTOS,
+        )
 
-        active_users = Profile.objects.filter(
-            last_activity__gte=recent_activity_cutoff
-        ).values_list("user_FK_id", flat=True)
+        active_users = set(
+            Profile.objects.filter(
+                user_FK__is_active=True,
+                last_activity__gte=limite_actividad,
+                last_activity__lte=ahora,
+            ).values_list("user_FK_id", flat=True)
+        )
 
-        context["active_users"] = active_users
-
-        context["cantidad_proyectos"] = Proyecto.objects.count()
-
-        context["ultimo_proyecto"] = (
-            Proyecto.objects.select_related("creado_por", "docente_lider")
-            .order_by("-creado")
-            .first()
+        context.update(
+            active_users=active_users,
+            usuarios_con_actividad=len(active_users),
+            actividad_minutos=self.ACTIVIDAD_MINUTOS,
+            actualizado_en=ahora,
+            cantidad_proyectos=Proyecto.objects.count(),
+            ultimo_proyecto=(
+                Proyecto.objects.select_related("creado_por", "docente_lider")
+                .order_by("-creado")
+                .first()
+            ),
         )
 
         return context

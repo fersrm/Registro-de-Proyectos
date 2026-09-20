@@ -1,24 +1,69 @@
 from pathlib import Path
-import os
-import environ
-import datetime as dt
 
-env = environ.Env()
-environ.Env.read_env()
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# import datetime as dt
+import os
+
+import environ
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env(
+    DEBUG=(bool, False),
+)
+
+# Busca siempre el archivo .env en la raíz del proyecto.
+ENV_FILE = BASE_DIR / ".env"
+environ.Env.read_env(ENV_FILE)
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ")+bj9df-lv@5jpxhec3cbjfk3i-w!xn-dsnqv3zw1u0+qv$4o7"
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = ["agroinnova.informaticachillan.com","10.201.24.88","127.0.0.1","localhost",]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
-CSRF_TRUSTED_ORIGINS = ["https://agroinnova.informaticachillan.com",]
+
+CSRF_TRUSTED_ORIGINS = env.list(
+    "CSRF_TRUSTED_ORIGINS",
+    default=[],
+)
+
+# PythonAnywhere entrega HTTPS mediante su proxy inverso.
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+)
+
+# Cookies solo por HTTPS.
+SECURE_SSL_REDIRECT = env.bool(
+    "SECURE_SSL_REDIRECT",
+    default=True,
+)
+
+SESSION_COOKIE_SECURE = env.bool(
+    "SESSION_COOKIE_SECURE",
+    default=True,
+)
+
+CSRF_COOKIE_SECURE = env.bool(
+    "CSRF_COOKIE_SECURE",
+    default=True,
+)
+
+# HSTS: inicialmente 1 hora para comprobar que todo funcione.
+SECURE_HSTS_SECONDS = env.int(
+    "SECURE_HSTS_SECONDS",
+    default=3600,
+)
+
+# No los actives aún hasta confirmar que todos los subdominios usan HTTPS.
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+
 
 # Application definition
 
@@ -48,7 +93,7 @@ THIRD_APPS = [
     "crispy_forms",
     "crispy_tailwind",
     "preventconcurrentlogins",
-    "axes",
+    # "axes",  # Desactivado temporalmente
 ]
 
 
@@ -57,9 +102,9 @@ INSTALLED_APPS = DEFAULT_DJANGO_APPS + LOCAL_APPS + THIRD_APPS
 
 TAILWIND_APP_NAME = "theme"
 
-INTERNAL_IPS = ["127.0.0.1",]
+INTERNAL_IPS = env.list("INTERNAL_IPS", default=[])
 
-NPM_BIN_PATH = ""
+NPM_BIN_PATH = env("NPM_BIN_PATH", default="")
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 
@@ -76,7 +121,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "preventconcurrentlogins.middleware.PreventConcurrentLoginsMiddleware",
-    "axes.middleware.AxesMiddleware",
+    # "axes.middleware.AxesMiddleware",  # Desactivado temporalmente
     "homeApp.middleware.UpdateLastActivityMiddleware",
 ]
 
@@ -100,7 +145,7 @@ TEMPLATES = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    "axes.backends.AxesStandaloneBackend",
+    # "axes.backends.AxesStandaloneBackend",  # Desactivado temporalmente
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
@@ -125,6 +170,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        "OPTIONS": {
+            "timeout": 10,
+        },
     }
 }
 
@@ -158,7 +206,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "es-us"
+LANGUAGE_CODE = "es-cl"
 
 TIME_ZONE = "America/Santiago"
 
@@ -186,6 +234,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Correo:
+# Se mantiene en consola porque aún no hay proveedor SMTP.
+# No afecta el registro ya que ACCOUNT_EMAIL_VERIFICATION = "none".
 # if DEBUG:
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # else: EMAIL_BACKEND = [Configuración de correo]
@@ -194,22 +245,23 @@ ACCOUNT_ALLOW_REGISTRATION = True
 
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 LOGIN_REDIRECT_URL = "Home"
+LOGIN_URL = "account_login"
 
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 
+# No se solicita confirmación porque no existe sistema de correos.
 ACCOUNT_EMAIL_VERIFICATION = "none"  # none, optional, mandatory
+
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_LOGOUT_ON_GET = False
+ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/login/"
 
-ACCOUNT_LOGOUT_ON_GET = True
+SESSION_COOKIE_AGE = 1800  # 30 minutos
 
-SESSION_COOKIE_AGE = 1800  # 20 minutes in seconds
 
-LOGIN_URL = "account_login"
-ACCOUNT_ADAPTER = "UsuarioApp.adapters.NoSignupAccountAdapter"
-
-# -----------------------------------------------
+# MFA
 
 MFA_RECOVERY_CODE_COUNT = 10
 # El número de códigos de recuperación.
@@ -220,15 +272,15 @@ MFA_TOTP_PERIOD = 30
 MFA_TOTP_DIGITS = 6
 # The number of digits for TOTP codes.
 
-# -------------------------------------------------
+# django-axes: protección frente a intentos de acceso repetidos
 
-delta = dt.timedelta(minutes=5)
+# delta = dt.timedelta(minutes=5)
 
-AXES_FAILURE_LIMIT = 3
-AXES_COOLOFF_TIME = delta
-AXES_RESET_ON_SUCCESS = True  # restablecerá el número de inicios de sesión fallidos
-AXES_ENABLE_ACCESS_FAILURE_LOG = True
-AXES_LOCK_OUT_AT_FAILURE = False  # bloquea al usuario
+# AXES_FAILURE_LIMIT = 3
+# AXES_COOLOFF_TIME = delta
+# AXES_RESET_ON_SUCCESS = True  # restablecerá el número de inicios de sesión fallidos
+# AXES_ENABLE_ACCESS_FAILURE_LOG = True
+# AXES_LOCK_OUT_AT_FAILURE = True  # bloquea al usuario
 
 # ------------------------------------------
 if not DEBUG:

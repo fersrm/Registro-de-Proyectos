@@ -1,17 +1,18 @@
 from .forms import UserCreateForm, ProfileCreateForm, UserUpdateForm, ProfileUpdateForm
 from django.views.generic import ListView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from allauth.account.models import EmailAddress
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from core.mixins import PermitsPositionMixin
+from .models import Profile
 
 
 class UserListView(LoginRequiredMixin, ListView):
     model = User
-    template_name = "pages/usuarios/usuarios_lista.html"
+    template_name = "pages/UsuarioApp/usuarios_lista.html"
     context_object_name = "users"
     paginate_by = 9
 
@@ -49,7 +50,7 @@ class UserListView(LoginRequiredMixin, ListView):
         return context
 
 
-class UserDeactivateView(LoginRequiredMixin, PermitsPositionMixin, View):
+class UserDeactivateView(PermitsPositionMixin, View):
     def post(self, request, pk, *args, **kwargs):
         user = User.objects.get(pk=pk)
 
@@ -68,7 +69,7 @@ class UserDeactivateView(LoginRequiredMixin, PermitsPositionMixin, View):
         return redirect("User")
 
 
-class UserActivateView(LoginRequiredMixin, PermitsPositionMixin, View):
+class UserActivateView(PermitsPositionMixin, View):
     def post(self, request, pk, *args, **kwargs):
         user = User.objects.get(pk=pk)
         user.is_active = True
@@ -78,8 +79,8 @@ class UserActivateView(LoginRequiredMixin, PermitsPositionMixin, View):
         return redirect("User")
 
 
-class UserCreateView(LoginRequiredMixin, PermitsPositionMixin, View):
-    template_name = "pages/usuarios/registro_usuario.html"
+class UserCreateView(PermitsPositionMixin, View):
+    template_name = "pages/UsuarioApp/registro_usuario.html"
 
     def get(self, request, *args, **kwargs):
         user_form = UserCreateForm()
@@ -107,11 +108,11 @@ class UserCreateView(LoginRequiredMixin, PermitsPositionMixin, View):
 
 
 class ProfileUpdateView(LoginRequiredMixin, View):
-    template_name = "pages/perfil/perfil.html"
+    template_name = "pages/UsuarioApp/perfil/perfil.html"
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        profile = user.profile
+        profile, _ = Profile.objects.get_or_create(user_FK=user)
         user_form = UserUpdateForm(instance=user)
         profile_form = ProfileUpdateForm(instance=profile)
 
@@ -121,7 +122,7 @@ class ProfileUpdateView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        profile = user.profile
+        profile, _ = Profile.objects.get_or_create(user_FK=user)
         user_form = UserUpdateForm(request.POST, instance=user)
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
 

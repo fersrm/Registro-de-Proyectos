@@ -167,7 +167,7 @@ class ProyectoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
 
-class ProyectoDeleteView(LoginRequiredMixin, PermitsPositionMixin, DeleteView):
+class ProyectoDeleteView(PermitsPositionMixin, DeleteView):
     model = Proyecto
     success_url = reverse_lazy("proyectos:listar")
 

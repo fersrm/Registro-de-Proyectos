@@ -33,7 +33,7 @@ main {
     flex-direction: column;
   }
 }
-strong {
+from strong {
   display: block;
   background-color: rgb(235, 168, 168);
   border-radius: 0.375rem;
@@ -46,68 +46,6 @@ strong {
 #id_password_helptext,
 #div_id_remember {
   display: none;
-}
-
-/* Contenedor de cada input de imagen */
-#div_id_imagen_1,
-#div_id_imagen_2,
-#div_id_imagen_3 {
-  margin-bottom: 1.2rem;
-}
-
-/* Label */
-#div_id_imagen_1 label,
-#div_id_imagen_2 label,
-#div_id_imagen_3 label {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #374151;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-/* Input file */
-#id_imagen_1,
-#id_imagen_2,
-#id_imagen_3 {
-  width: 100%;
-  border: 2px dashed #cbd5e1;
-  border-radius: 0.9rem;
-  padding: 1rem;
-  background-color: #f8fafc;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Hover */
-#id_imagen_1:hover,
-#id_imagen_2:hover,
-#id_imagen_3:hover {
-  border-color: #2563eb;
-  background-color: #eff6ff;
-}
-
-/* Botón interno del input file */
-#id_imagen_1::file-selector-button,
-#id_imagen_2::file-selector-button,
-#id_imagen_3::file-selector-button {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 0.55rem 1rem;
-  border-radius: 0.6rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-right: 1rem;
-  transition: background-color 0.2s ease;
-}
-
-/* Hover del botón */
-#id_imagen_1::file-selector-button:hover,
-#id_imagen_2::file-selector-button:hover,
-#id_imagen_3::file-selector-button:hover {
-  background-color: #1d4ed8;
 }
 
 /* Contenedor general */
@@ -134,14 +72,14 @@ strong {
 }
 
 /* Quitar efecto visual feo del strong */
-.email-reenvio strong {
+.email-reenvio strong,
+.ck strong {
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
   border-radius: 0 !important;
   color: inherit !important;
-  font-weight: normal;
   display: inline;
 }
 
@@ -179,39 +117,52 @@ strong {
   cursor: pointer;
 }
 
-/* Recursos adicionales - input file */
-#recursos-container input[type="file"][name$="-archivo"] {
+/* Contenedor de cualquier input tipo archivo dentro de un formulario */
+form div:has(input[type="file"]) {
+  margin-bottom: 1.2rem;
+}
+
+/* Label asociado a un input de archivo */
+form div:has(input[type="file"]) label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* Input tipo file */
+form input[type="file"] {
   width: 100%;
+  cursor: pointer;
   border: 2px dashed #cbd5e1;
   border-radius: 0.9rem;
-  padding: 1rem;
   background-color: #f8fafc;
+  padding: 1rem;
   color: #475569;
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-/* Hover */
-#recursos-container input[type="file"][name$="-archivo"]:hover {
+/* Hover del área de carga */
+form input[type="file"]:hover {
   border-color: #2563eb;
   background-color: #eff6ff;
 }
 
 /* Botón interno */
-#recursos-container input[type="file"][name$="-archivo"]::file-selector-button {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 0.55rem 1rem;
-  border-radius: 0.6rem;
-  font-weight: 600;
-  cursor: pointer;
+form input[type="file"]::file-selector-button {
   margin-right: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.6rem;
+  background-color: #2563eb;
+  padding: 0.55rem 1rem;
+  color: white;
+  font-weight: 600;
   transition: background-color 0.2s ease;
 }
 
-/* Hover botón interno */
-#recursos-container
-  input[type="file"][name$="-archivo"]::file-selector-button:hover {
+/* Hover del botón interno */
+form input[type="file"]::file-selector-button:hover {
   background-color: #1d4ed8;
 }

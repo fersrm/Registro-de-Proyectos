@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Profile, Position
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.core.files.uploadedfile import UploadedFile
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -54,7 +55,8 @@ class ProfileUpdateForm(forms.ModelForm):
 
     def clean_image(self):
         image = self.cleaned_data.get("image")
-        if image and image.size > 5 * 1024 * 1024:
+        # La imagen inicial puede ser el avatar predeterminado, sin archivo en media.
+        if isinstance(image, UploadedFile) and image.size > 5 * 1024 * 1024:
             raise forms.ValidationError(
                 "El tamaño del archivo de imagen no debe exceder los 5 MB."
             )
