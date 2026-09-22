@@ -82,6 +82,7 @@ LOCAL_APPS = [
     "UsuarioApp",
     "ProyectosApp",
     "EspaciosApp",
+    "DendometroApp",
 ]
 
 THIRD_APPS = [
@@ -241,7 +242,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # else: EMAIL_BACKEND = [Configuración de correo]
 
-ACCOUNT_ALLOW_REGISTRATION = True
 
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = False
 LOGIN_REDIRECT_URL = "Home"
@@ -257,6 +257,7 @@ ACCOUNT_EMAIL_VERIFICATION = "none"  # none, optional, mandatory
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_LOGOUT_ON_GET = False
 ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/login/"
+ACCOUNT_ADAPTER = "UsuarioApp.adapters.NoSignupAccountAdapter"
 
 SESSION_COOKIE_AGE = 1800  # 30 minutos
 

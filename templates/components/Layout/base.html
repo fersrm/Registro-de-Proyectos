@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/mensajes.css' %}">
     {% block extra_css %} {% endblock extra_css %}
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {% block alpine_script %}<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>{% endblock %}
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"  referrerpolicy="no-referrer"></script>
     <script defer src="{% static "js/mensajes.js" %}"></script>
     {% block javascript %} {% endblock javascript %}

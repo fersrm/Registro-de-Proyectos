@@ -1,0 +1,8 @@
+{% extends 'dendometro/base.html' %}
+{% block dendro_title %}Configuración de dendrómetros{% endblock %}
+{% block dendro_subtitle %}Cada sensor tiene su propio canal, calibración, mantenimiento y umbrales.{% endblock %}
+{% block dendro_content %}
+<div class="d-toolbar"><p class="d-muted">Deshabilitar un sensor conserva sus mediciones.</p><a class="d-button" href="{% url 'dendometro:crear' %}">+ Agregar dendrómetro</a></div>
+<div class="d-card d-table-scroll"><table class="d-table"><thead><tr><th>Sensor</th><th>Origen</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{% for sensor in sensores %}<tr><td><strong>{{ sensor.nombre }}</strong><br><span class="d-muted">{{ sensor.ubicacion }}</span></td><td>Canal {{ sensor.channel_id }} · Field {{ sensor.field_id }}</td><td>{% if not sensor.activo %}Deshabilitado{% elif sensor.config.sensor_in_maintenance %}Mantenimiento{% else %}Operativo{% endif %}</td><td><div class="d-actions"><a class="d-button d-secondary" href="{% url 'dendometro:editar' sensor.pk %}">Editar</a><a class="d-button d-secondary" href="{% url 'dendometro:visualizacion' sensor.pk %}">Visualizar</a><button type="button" class="d-button d-secondary" data-test-url="{% url 'dendometro:probar' sensor.pk %}">Probar conexión</button></div></td></tr>{% empty %}<tr><td colspan="4">Todavía no hay sensores. Usa «Agregar dendrómetro».</td></tr>{% endfor %}</tbody></table></div>
+<form hidden>{% csrf_token %}</form><p id="d-feedback" class="d-notice" role="status" hidden></p>
+{% endblock %}

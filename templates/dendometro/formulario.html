@@ -1,0 +1,12 @@
+{% extends 'dendometro/base.html' %}
+{% load crispy_forms_tags %}
+{% block dendro_title %}{% if object %}Configurar {{ object.nombre }}{% else %}Agregar dendrómetro{% endif %}{% endblock %}
+{% block dendro_subtitle %}Compatible con el firmware ESP32: Field 1 en milímetros y Field 2 como estado lógico.{% endblock %}
+{% block dendro_content %}
+<form method="post" id="d-config-form" class="d-form">{% csrf_token %}
+{% if form.errors %}<div class="d-warning" role="alert">No se guardaron los cambios. Revisa los campos señalados. {{ form.non_field_errors }}</div>{% endif %}
+<div class="d-toolbar"><p class="d-muted">Los campos de voltaje solo se utilizan si seleccionas ese modo de entrada.</p><button type="button" class="d-button d-secondary" id="d-esp32-profile">Cargar perfil ESP32 actual</button></div>
+{% for title, fields in form.sections %}<section class="d-card mb-5"><h2 class="text-xl font-semibold mb-2">{{ title }}</h2>{% if title == "Mantenimiento" %}<div class="d-actions mb-4"><button type="button" class="d-button d-secondary" data-maintenance="start">Iniciar mantenimiento al guardar</button><button type="button" class="d-button d-secondary" data-maintenance="end">Finalizar mantenimiento al guardar</button></div>{% endif %}<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">{% for field in fields %}<div class="min-w-0">{{ field|as_crispy_field }}</div>{% endfor %}</div></section>{% endfor %}
+<div class="d-actions d-form-footer"><button class="d-button" type="submit">Guardar y aplicar</button><a class="d-button d-secondary" href="{% url 'dendometro:configuracion' %}">Volver</a>{% if object %}<a class="d-button d-secondary" href="{% url 'dendometro:visualizacion' object.pk %}">Visualizar sensor</a>{% endif %}</div>
+</form>
+{% endblock %}

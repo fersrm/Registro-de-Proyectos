@@ -1,0 +1,15 @@
+{% extends 'components/Layout/base_extendido.html' %}
+{% load static %}
+{% block head_title %}Dendrómetros · Monitor vegetal{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'dendometro/dendometro.css' %}">{% endblock %}
+{% block alpine_script %}<script defer src="{% static 'dendometro/vendor/alpine.min.js' %}"></script>{% endblock %}
+{% block javascript %}<script defer src="{% static 'dendometro/vendor/chart.umd.js' %}"></script><script defer src="{% static 'dendometro/dendometro.js' %}"></script>{% endblock %}
+{% block content_main %}
+<div class="dendro pb-10" id="dendro-module">
+  <header class="d-header"><div><p class="d-eyebrow">PARCELA · MONITOREO VEGETAL</p><h1 class="text-3xl font-bold text-white">{% block dendro_title %}Dendrómetros{% endblock %}</h1><p class="d-muted mt-2">{% block dendro_subtitle %}Lecturas, sesiones e indicadores de cada sensor en un solo lugar.{% endblock %}</p></div><a class="d-button d-secondary" href="{% url 'dendometro:listado' %}">Todos los sensores</a></header>
+  <nav class="d-tabs" aria-label="Secciones del módulo"><a href="{% url 'dendometro:listado' %}" {% if request.resolver_match.url_name == 'listado' or request.resolver_match.url_name == 'visualizacion' %}aria-current="page"{% endif %}>Visualización</a>{% if can_configure %}<a href="{% url 'dendometro:configuracion' %}" {% if request.resolver_match.url_name != 'listado' and request.resolver_match.url_name != 'visualizacion' %}aria-current="page"{% endif %}>Configuración</a>{% endif %}</nav>
+  {% for message in messages %}<div class="d-notice" role="status">{{ message }}</div>{% endfor %}
+  {% block dendro_content %}{% endblock %}
+</div>
+<dialog id="d-loading" aria-labelledby="d-loading-title"><h2 id="d-loading-title">Cargando lecturas</h2><p>Importante: espera a que finalice la carga antes de cambiar de pestaña.</p><progress id="d-progress" max="100" value="0"></progress><p id="d-progress-text" aria-live="polite">Preparando…</p><p class="d-muted">Si la carga se interrumpe, puedes reanudarla sin duplicar las lecturas.</p></dialog>
+{% endblock %}
