@@ -21,11 +21,21 @@
         </h2>
 
         {{ formset.management_form }}
+        {% if formset.non_form_errors %}
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {{ formset.non_form_errors }}
+            </div>
+        {% endif %}
 
         <div id="integrantes-container" class="space-y-4">
             {% for integrante_form in formset %}
                 <div class="integrante-form grid grid-cols-1 md:grid-cols-3 gap-4 border p-4 rounded-lg bg-gray-50">
                     {{ integrante_form.id }}
+                    {% if integrante_form.non_field_errors %}
+                        <div class="md:col-span-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                            {{ integrante_form.non_field_errors }}
+                        </div>
+                    {% endif %}
 
                     <div>
                         {{ integrante_form.nombre|as_crispy_field }}
@@ -62,12 +72,22 @@
         </p>
 
         {{ recurso_formset.management_form }}
+        {% if recurso_formset.non_form_errors %}
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {{ recurso_formset.non_form_errors }}
+            </div>
+        {% endif %}
 
         <div id="recursos-container" class="space-y-4">
             {% for recurso_form in recurso_formset %}
                 <div class="recurso-form grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 border p-4 rounded-xl bg-gray-50">
 
                     {{ recurso_form.id }}
+                    {% if recurso_form.non_field_errors %}
+                        <div class="md:col-span-2 xl:col-span-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                            {{ recurso_form.non_field_errors }}
+                        </div>
+                    {% endif %}
 
                     <div class="md:col-span-2">
                         {{ recurso_form.titulo|as_crispy_field }}

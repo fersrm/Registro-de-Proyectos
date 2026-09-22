@@ -26,12 +26,19 @@ module.exports = {
          */
         '../../**/templates/**/*.html',
 
+        /* JavaScript propio que construye fragmentos con clases Tailwind. */
+        '../../static/js/**/*.js',
+
+        /* Formularios locales que declaran clases Tailwind desde Python. */
+        '../../UsuarioApp/**/*.py',
+        '!../../UsuarioApp/migrations/**',
+
         /**
          * JS: If you use Tailwind CSS in JavaScript, uncomment the following lines and make sure
          * patterns match your project structure.
          */
         /* JS 1: Ignore any JavaScript in node_modules folder. */
-        // '!../../**/node_modules',
+        '!../../**/node_modules/**',
         /* JS 2: Process all JavaScript files in the project. */
         // '../../**/*.js',
 

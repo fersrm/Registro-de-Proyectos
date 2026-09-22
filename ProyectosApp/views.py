@@ -1,18 +1,21 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
-    ListView,
-    DetailView,
-    UpdateView,
     DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
 )
-from django.urls import reverse_lazy
-from django.db import transaction
-from .models import Proyecto
-from .forms import ProyectoForm, IntegranteProyectoFormSet, RecursoProyectoFormSet
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from core.mixins import PermitsPositionMixin
-from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+
+from core.mixins import PermitsPositionMixin, usuario_puede_editar_proyecto
+
+from .forms import IntegranteProyectoFormSet, ProyectoForm, RecursoProyectoFormSet
+from .models import AuditoriaProyecto, Proyecto
 
 
 class ProyectoListView(LoginRequiredMixin, ListView):
@@ -81,26 +84,36 @@ class ProyectoCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        context = self.get_context_data()
+        self.object = form.save(commit=False)
+        self.object.creado_por = self.request.user
+        self.object.modificado_por = self.request.user
+        context = self.get_context_data(form=form)
         formset = context["formset"]
         recurso_formset = context["recurso_formset"]
 
+        integrantes_validos = formset.is_valid()
+        recursos_validos = recurso_formset.is_valid()
+        if not integrantes_validos or not recursos_validos:
+            context["form"] = form
+            context["formset"] = formset
+            context["recurso_formset"] = recurso_formset
+            return self.render_to_response(context)
+
         with transaction.atomic():
-            self.object = form.save(commit=False)
-            self.object.creado_por = self.request.user
-            self.object.modificado_por = self.request.user
             self.object.save()
+            formset.instance = self.object
+            formset.save()
 
-            if formset.is_valid() and recurso_formset.is_valid():
-                formset.instance = self.object
-                formset.save()
+            recurso_formset.instance = self.object
+            recurso_formset.save()
 
-                recurso_formset.instance = self.object
-                recurso_formset.save()
-            else:
-                return self.form_invalid(form)
+            AuditoriaProyecto.registrar(
+                accion=AuditoriaProyecto.Accion.CREAR,
+                proyecto=self.object,
+                actor=self.request.user,
+            )
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProyectoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -110,18 +123,7 @@ class ProyectoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy("proyectos:listar")
 
     def test_func(self):
-        proyecto = self.get_object()
-        permiso = getattr(
-            self.request.user.profile.position_FK, "permission_code", "RESTRICTED"
-        )
-
-        if permiso in ["ADMIN", "MANAGER"]:
-            return True
-
-        if permiso == "RESTRICTED" and proyecto.creado_por == self.request.user:
-            return True
-
-        return False
+        return usuario_puede_editar_proyecto(self.request.user, self.get_object())
 
     def handle_no_permission(self):
         raise PermissionDenied("No tienes permisos para editar este proyecto.")
@@ -146,35 +148,57 @@ class ProyectoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        context = self.get_context_data()
+        self.object = form.save(commit=False)
+        self.object.modificado_por = self.request.user
+        context = self.get_context_data(form=form)
         formset = context["formset"]
         recurso_formset = context["recurso_formset"]
 
+        integrantes_validos = formset.is_valid()
+        recursos_validos = recurso_formset.is_valid()
+        if not integrantes_validos or not recursos_validos:
+            context["form"] = form
+            context["formset"] = formset
+            context["recurso_formset"] = recurso_formset
+            return self.render_to_response(context)
+
         with transaction.atomic():
-            self.object = form.save(commit=False)
-            self.object.modificado_por = self.request.user
             self.object.save()
+            formset.instance = self.object
+            formset.save()
 
-            if formset.is_valid() and recurso_formset.is_valid():
-                formset.instance = self.object
-                formset.save()
+            recurso_formset.instance = self.object
+            recurso_formset.save()
 
-                recurso_formset.instance = self.object
-                recurso_formset.save()
-            else:
-                return self.form_invalid(form)
+            AuditoriaProyecto.registrar(
+                accion=AuditoriaProyecto.Accion.MODIFICAR,
+                proyecto=self.object,
+                actor=self.request.user,
+            )
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ProyectoDeleteView(PermitsPositionMixin, DeleteView):
     model = Proyecto
     success_url = reverse_lazy("proyectos:listar")
 
+    def form_valid(self, form):
+        success_url = self.get_success_url()
+        with transaction.atomic():
+            AuditoriaProyecto.registrar(
+                accion=AuditoriaProyecto.Accion.ELIMINAR,
+                proyecto=self.object,
+                actor=self.request.user,
+            )
+            self.object.delete()
+        return HttpResponseRedirect(success_url)
+
 
 #### QR ######################################################
-import qrcode
 from io import BytesIO
+
+import qrcode
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 

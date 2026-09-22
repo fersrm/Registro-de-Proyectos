@@ -1,13 +1,14 @@
-from django.db import models
-from .choices import PERMISOS
+import os
+import uuid
 
 # Create your models here.
-
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils import timezone
-import uuid
-import os
-from utils.customer_img import resize_image, crop_image, handle_old_image
+
+from utils.customer_img import crop_image, handle_old_image, resize_image
+
+from .choices import PERMISOS
 
 
 def profile_picture_path(instance, filename):
@@ -50,7 +51,7 @@ class Profile(models.Model):
         if self.pk:
             handle_old_image(Profile, self.pk, self.image)
 
-        super(Profile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         if self.image and os.path.exists(self.image.path):
             resize_image(self.image.path, 300)

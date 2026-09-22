@@ -1,10 +1,8 @@
-from pathlib import Path
-
 # import datetime as dt
 import os
+from pathlib import Path
 
 import environ
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

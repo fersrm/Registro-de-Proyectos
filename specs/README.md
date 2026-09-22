@@ -15,8 +15,9 @@
 | 002 | Proyectos | Baseline documentada | Proyectos, integrantes, recursos, imágenes, permisos y QR |
 | 003 | Espacios | Baseline documentada | Catálogo y ficha/QR de espacios |
 | 004 | Dendrómetros | Baseline documentada | Configuración, sincronización, análisis, gráficos y exportación |
+| 005 | Correcciones de observaciones y auditoría | Implementada y validada; aceptación pendiente | O-001 a O-010: atomicidad, permisos, pruebas, Tailwind, migraciones y auditoría de proyectos |
 
-Siguiente número libre observado: **005**. Verificarlo siempre antes de crear una carpeta.
+Siguiente número libre observado: **006**. Verificarlo siempre antes de crear una carpeta.
 
 ## Convención
 

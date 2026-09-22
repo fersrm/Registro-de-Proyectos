@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -362,14 +362,18 @@ def process_series(
     exclusions = parse_excluded_ranges(cfg.excluded_ranges_utc)
     for item in exclusions:
         end = item.end if item.end is not None else pd.Timestamp.now(tz="UTC")
-        overlap = (proc.index <= end) & (proc.index + pd.Timedelta(minutes=minutes) > item.start)
+        overlap = (proc.index <= end) & (
+            proc.index + pd.Timedelta(minutes=minutes) > item.start
+        )
         proc = proc.loc[~overlap]
     if proc.empty:
         return pd.DataFrame(), stats
     maintenance_breaks = pd.Series(False, index=proc.index)
     previous = pd.Series(proc.index, index=proc.index).shift()
     for item in exclusions:
-        maintenance_breaks |= ((previous < item.start) & (proc.index >= item.start)).fillna(False)
+        maintenance_breaks |= (
+            (previous < item.start) & (proc.index >= item.start)
+        ).fillna(False)
 
     # 2) Sesiones temporales. Un hueco largo inicia una serie independiente.
     base_sessions = _assign_sessions(proc.index, cfg.session_gap_minutes)
@@ -399,7 +403,9 @@ def process_series(
         time_breaks = pd.Series(proc.index, index=proc.index).diff() > pd.Timedelta(
             minutes=max(1, int(cfg.session_gap_minutes))
         )
-        combined_breaks = (time_breaks.fillna(False) | jump_breaks | maintenance_breaks).astype(int)
+        combined_breaks = (
+            time_breaks.fillna(False) | jump_breaks | maintenance_breaks
+        ).astype(int)
         proc["session_id"] = combined_breaks.cumsum() + 1
 
     # 4) Suavizado y métricas siempre por sesión; nunca cruzan un hueco temporal.
@@ -412,7 +418,7 @@ def process_series(
     proc["trend_um"] = _trend_column(proc, cfg)
 
     stats.session_count = int(proc["session_id"].nunique())
-    stats.valid_analysis_points = int(len(proc))
+    stats.valid_analysis_points = len(proc)
 
     # Métricas únicamente de la ÚLTIMA sesión operativa.
     latest_session_id = int(proc["session_id"].iloc[-1])
@@ -516,7 +522,11 @@ def _evaluate_alerts(
         )
         return
 
-    if cfg.sensor_reset_warning_um > 0 and stats.latest_um is not None and stats.latest_um >= cfg.sensor_reset_warning_um:
+    if (
+        cfg.sensor_reset_warning_um > 0
+        and stats.latest_um is not None
+        and stats.latest_um >= cfg.sensor_reset_warning_um
+    ):
         stats.alert_level = "REAJUSTAR DC1"
         stats.alert_message = (
             f"Lectura operativa {stats.latest_um:.1f} µm. Se alcanzó el aviso de reajuste "

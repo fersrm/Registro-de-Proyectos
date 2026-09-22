@@ -30,6 +30,19 @@
 - Desplegar o modificar datos productivos.
 - Certificar privacidad, seguridad, exactitud agronómica o capacidad de producción.
 
+## Cambio transversal implementado — Spec 005
+
+El 2026-09-22 el propietario confirmó que:
+
+- detalle y QR de proyectos, y fichas y QR de espacios, continúan públicos sin login;
+- el listado de usuarios continúa disponible para cualquier usuario autenticado, no para anónimos;
+- cualquier usuario autenticado puede crear proyectos; y
+- crear, modificar y eliminar proyectos debe dejar auditoría persistente.
+
+La spec 005 corrigió atomicidad de formularios de proyectos, `RecursoProyecto.__str__`, permisos inconsistentes, el gráfico de ejemplo ausente, pruebas de apps, fuentes Tailwind y versionado de migraciones. La validación automatizada y visual está registrada en `specs/005-correcciones-observaciones-y-auditoria/validation.md`; la aceptación final del propietario continúa pendiente.
+
+Como ajuste pequeño posterior, los controles de cierre de sesión de la barra lateral y menú de perfil ejecutan `POST` con CSRF directamente, sin pantalla de confirmación y sin habilitar logout por `GET`.
+
 ## Fuentes
 
-Código del ZIP recibido el 2026-09-20, specs `001`–`004`, `LEEME_DENDOMETRO.md` y documentación `DENDOMETRO_*` existente.
+Código del ZIP recibido el 2026-09-20, specs `001`–`005`, `LEEME_DENDOMETRO.md` y documentación `DENDOMETRO_*` existente.

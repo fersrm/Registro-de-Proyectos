@@ -5,8 +5,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.views.generic import ListView
 
-from UsuarioApp.models import Profile
 from ProyectosApp.models import Proyecto
+from UsuarioApp.models import Profile
 
 User = get_user_model()
 

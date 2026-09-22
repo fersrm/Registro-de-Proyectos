@@ -8,7 +8,7 @@ Proyecto Django para gestión de usuarios, proyectos, espacios agroeducativos y 
 2. Instala `requirements.txt`.
 3. Crea tu `.env` local con los valores requeridos por `core/settings.py`.
 4. Ejecuta migraciones en una base local.
-5. Compila Tailwind desde `theme/static_src/` cuando cambien estilos.
+5. Compila Tailwind desde la raíz con `py manage.py tailwind build` cuando cambien estilos.
 6. Inicia Django con `python manage.py runserver`.
 
 No se distribuyen `.env`, bases locales ni archivos cargados por usuarios.

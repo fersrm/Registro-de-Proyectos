@@ -41,6 +41,14 @@ Esta tabla registra conducta observada; no afirma que la exposición pública se
 
 Las lecturas crudas se persisten por sensor y marca temporal. La configuración JSON se interpreta en servicios; análisis y gráficos derivan valores convertidos, sesiones, suavizado, tendencia y alertas. La sincronización usa trabajos persistentes, rangos y lease para reanudación/concurrencia. ThingSpeak se consulta por HTTPS desde servidor y la clave no debe llegar al navegador.
 
-## Propuestas futuras
+## Cambios implementados
 
-Ninguna arquitectura nueva está aprobada. Cualquier cambio se marca como **propuesto** en el plan de su spec hasta que se implemente y valide.
+### Spec 005 — implementada y validada el 2026-09-22
+
+- `ProyectosApp` incorpora `AuditoriaProyecto` para eventos mínimos de crear, modificar y eliminar. Los eventos participan de la transacción de negocio y conservan snapshots de actor/proyecto después de eliminaciones.
+- Las vistas de proyectos validan formulario principal y formsets antes de confirmar una sola transacción.
+- `core.mixins.usuario_tiene_cargo` es la autoridad para ADMIN/MANAGER/superusuario y `permisos_tags` reutiliza la regla en la interfaz.
+- Tailwind escanea rutas específicas de JavaScript y Python propias que contienen clases, sin recorrer entornos ni dependencias.
+- Las migraciones de apps locales están disponibles para control de versiones y la auditoría se añade mediante `ProyectosApp.0009`.
+
+La interfaz pública de consulta de auditoría y hacer pública la lista de espacios no forman parte de la arquitectura implementada.

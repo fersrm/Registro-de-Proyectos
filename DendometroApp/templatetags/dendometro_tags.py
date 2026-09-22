@@ -1,4 +1,5 @@
 from django import template
+
 from core.mixins import usuario_tiene_cargo
 
 register = template.Library()

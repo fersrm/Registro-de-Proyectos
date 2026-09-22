@@ -1,6 +1,8 @@
 {% extends 'components/Layout/base_extendido.html' %}
+{% load permisos_tags %}
 
 {% block content_main %}
+{% puede_administrar user as puede_administrar_sistema %}
 
 <div class="max-w-7xl mx-auto">
 
@@ -91,14 +93,15 @@
                               </div>
 
                               <div class="flex gap-7">
-                                {% if user.profile.position_FK.permission_code != "RESTRICTED" or proyecto.creado_por == user %}
+                                {% puede_editar_proyecto user proyecto as puede_editar %}
+                                {% if puede_editar %}
                                     <a href="{% url 'proyectos:editar' proyecto.pk %}"
                                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm transition w-20 text-center">
                                         Editar
                                     </a>
                                 {% endif %}
 
-                                {% if user.profile.position_FK.permission_code != "RESTRICTED" %}
+                                {% if puede_administrar_sistema %}
                                   <button
                                       onclick="openDeleteModal('{% url 'proyectos:eliminar' proyecto.pk %}', '{{ proyecto.titulo|escapejs }}')"
                                       class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition w-20 text-center">

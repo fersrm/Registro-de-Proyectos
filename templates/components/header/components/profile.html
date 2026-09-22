@@ -26,6 +26,9 @@
     >
     <!-- Active: "bg-gray-50", Not Active: "" -->
     <a href="{% url "Profile" %}" class="block px-3 py-1 text-sm leading-6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-0">Perfil</a>
-    <a href="{% url 'account_logout' %}" class="block px-3 py-1 text-sm leading-6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-1">Cerrar Sesión</a>
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="block w-full px-3 py-1 text-left text-sm leading-6 text-gray-900" role="menuitem" tabindex="-1" id="user-menu-item-1">Cerrar Sesión</button>
+    </form>
   </div>
 </div>

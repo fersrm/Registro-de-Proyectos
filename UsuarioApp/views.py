@@ -1,12 +1,14 @@
-from .forms import UserCreateForm, ProfileCreateForm, UserUpdateForm, ProfileUpdateForm
-from django.views.generic import ListView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
-from django.db.models import Q
 from allauth.account.models import EmailAddress
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.db.models import Q
+from django.shortcuts import redirect, render
+from django.views.generic import ListView, View
+
 from core.mixins import PermitsPositionMixin
+
+from .forms import ProfileCreateForm, ProfileUpdateForm, UserCreateForm, UserUpdateForm
 from .models import Profile
 
 

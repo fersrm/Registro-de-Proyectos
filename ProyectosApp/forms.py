@@ -1,12 +1,14 @@
-from django import forms
-from django.utils import timezone
-from django.contrib.auth.models import User
-from django.forms import inlineformset_factory
+import os
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from .models import Proyecto, IntegranteProyecto, RecursoProyecto
+from django import forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-import os
+from django.forms import inlineformset_factory
+from django.utils import timezone
+
+from .models import IntegranteProyecto, Proyecto, RecursoProyecto
 
 
 def validar_imagen(imagen):

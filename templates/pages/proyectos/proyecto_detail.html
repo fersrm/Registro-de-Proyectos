@@ -1,8 +1,9 @@
 {% extends 'components/Layout/base.html' %}
 
-{% load static %}
+{% load static permisos_tags %}
 
 {% block content %}
+{% puede_administrar user as puede_administrar_sistema %}
 
 <div class="py-14">
 
@@ -456,7 +457,7 @@
 
                   </div>
 
-                  <div class="{% if user.is_authenticated and user.profile.position_FK.permission_code != "RESTRICTED" %} border-b {% endif %} pb-4 flex items-center gap-7">
+                  <div class="{% if puede_administrar_sistema %} border-b {% endif %} pb-4 flex items-center gap-7">
 
                     <svg width="26" height="26" fill="#2563eb" class="bi bi-buildings" viewBox="0 0 16 16">
 
@@ -484,7 +485,7 @@
 
                   </div>
 
-                  {% if user.is_authenticated and user.profile.position_FK.permission_code != "RESTRICTED" %}
+                  {% if puede_administrar_sistema %}
 
                     <div class="flex items-center gap-7">
 

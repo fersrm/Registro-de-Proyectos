@@ -1,8 +1,10 @@
-from django.db import models
-from django.contrib.auth.models import User
-from utils.customer_img import handle_old_project_images
-import uuid
 import os
+import uuid
+
+from django.contrib.auth.models import User
+from django.db import models
+
+from utils.customer_img import handle_old_project_images
 
 
 def proyecto_image_path(instance, filename):
@@ -21,7 +23,6 @@ def recurso_proyecto_path(instance, filename):
 
 
 class Proyecto(models.Model):
-
     TRL_CHOICES = [
         ("TRL1", "TRL 1"),
         ("TRL2", "TRL 2"),
@@ -77,7 +78,6 @@ class Proyecto(models.Model):
     def save(self, *args, **kwargs):
 
         if self.pk:
-
             handle_old_project_images(
                 Proyecto,
                 self.pk,
@@ -95,7 +95,6 @@ class Proyecto(models.Model):
 
 
 class IntegranteProyecto(models.Model):
-
     ROLES = [
         ("docente", "Docente"),
         ("estudiante", "Estudiante"),
@@ -118,7 +117,6 @@ class IntegranteProyecto(models.Model):
 
 
 class RecursoProyecto(models.Model):
-
     proyecto = models.ForeignKey(
         Proyecto, on_delete=models.CASCADE, related_name="recursos"
     )
@@ -134,9 +132,66 @@ class RecursoProyecto(models.Model):
     creado = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.titulo} - {self.get_tipo_display()}"
+        origenes = []
+        if self.archivo:
+            origenes.append("archivo")
+        if self.url:
+            origenes.append("enlace")
+        if not origenes:
+            return self.titulo
+        return f"{self.titulo} - {' y '.join(origenes)}"
 
     class Meta:
         ordering = [
             "titulo",
         ]
+
+
+class AuditoriaProyecto(models.Model):
+    class Accion(models.TextChoices):
+        CREAR = "CREAR", "Crear"
+        MODIFICAR = "MODIFICAR", "Modificar"
+        ELIMINAR = "ELIMINAR", "Eliminar"
+
+    accion = models.CharField(max_length=10, choices=Accion.choices)
+    fecha = models.DateTimeField(auto_now_add=True)
+    proyecto = models.ForeignKey(
+        Proyecto,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="eventos_auditoria",
+    )
+    proyecto_id_original = models.PositiveBigIntegerField()
+    proyecto_titulo = models.CharField(max_length=200)
+    actor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="eventos_auditoria_proyectos",
+    )
+    actor_id_original = models.PositiveBigIntegerField(null=True, blank=True)
+    actor_username = models.CharField(max_length=150, blank=True)
+
+    class Meta:
+        ordering = ["-fecha", "-pk"]
+        verbose_name = "Auditoría de proyecto"
+        verbose_name_plural = "Auditorías de proyectos"
+
+    @classmethod
+    def registrar(cls, *, accion, proyecto, actor):
+        actor_id = getattr(actor, "pk", None)
+        actor_username = actor.get_username() if actor_id else ""
+        return cls.objects.create(
+            accion=accion,
+            proyecto=proyecto,
+            proyecto_id_original=proyecto.pk,
+            proyecto_titulo=proyecto.titulo,
+            actor=actor if actor_id else None,
+            actor_id_original=actor_id,
+            actor_username=actor_username,
+        )
+
+    def __str__(self):
+        return f"{self.get_accion_display()}: {self.proyecto_titulo}"

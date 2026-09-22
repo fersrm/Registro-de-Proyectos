@@ -1,5 +1,6 @@
-{% load dendometro_tags %}
+{% load dendometro_tags permisos_tags %}
 {% puede_configurar_dendrometros user as puede_configurar_dendro %}
+{% puede_administrar user as puede_administrar_sistema %}
 <nav class="flex flex-1 flex-col">
   <ul class="flex flex-1 flex-col gap-y-7">
     <li>
@@ -12,7 +13,7 @@
             Inicio
           </a>
         </li>
-        {% if user.profile.position_FK.permission_code != "RESTRICTED" %}
+        {% if puede_administrar_sistema %}
           <li>
             <a href="{% url 'Register' %}" class=" group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold {% if request.path == '/registro/' %}text-white bg-gray-800 {% else %} text-gray-400 hover:text-white hover:bg-gray-800 {% endif %}">
               <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,13 +78,16 @@
       </ul>
     </li>
     <li class="mt-auto">
-      <a href="{% url 'account_logout' %}" class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white">
+      <form method="post" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="group -mx-2 flex w-full gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-400 hover:bg-gray-800 hover:text-white">
         <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
           <path stroke="none" d="M0 0h24v24H0z"/>  <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />  
           <path d="M7 12h14l-3 -3m0 6l3 -3" />
         </svg>
         Cerrar Sesión
-      </a>
+        </button>
+      </form>
     </li>
   </ul>
 </nav>

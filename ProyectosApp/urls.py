@@ -1,10 +1,11 @@
 from django.urls import path
+
 from .views import (
-    ProyectoListView,
     ProyectoCreateView,
-    ProyectoDetailView,
-    ProyectoUpdateView,
     ProyectoDeleteView,
+    ProyectoDetailView,
+    ProyectoListView,
+    ProyectoUpdateView,
     proyecto_qr_view,
 )
 

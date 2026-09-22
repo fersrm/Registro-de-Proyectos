@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Profile, Position
+
+from .models import Position, Profile
 
 
 class ProfileAdmin(admin.ModelAdmin):

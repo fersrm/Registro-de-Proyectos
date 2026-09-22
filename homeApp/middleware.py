@@ -14,10 +14,10 @@ class UpdateLastActivityMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
         # No aplicar en el administrador.
         if getattr(request.resolver_match, "app_name", "") == "admin":
-            return None
+            return
 
         if not request.user.is_authenticated:
-            return None
+            return
 
         now = timezone.now()
 
@@ -28,12 +28,12 @@ class UpdateLastActivityMiddleware(MiddlewareMixin):
             last_update = parse_datetime(last_update_raw)
 
             if last_update and now - last_update < self.ACTIVITY_UPDATE_INTERVAL:
-                return None
+                return
 
         try:
             profile = request.user.profile
         except ObjectDoesNotExist:
-            return None
+            return
 
         # Actualiza el perfil solo cada 5 minutos.
         profile.update_last_activity()
@@ -42,4 +42,4 @@ class UpdateLastActivityMiddleware(MiddlewareMixin):
         request.session[self.SESSION_ACTIVITY_KEY] = now.isoformat()
         request.session.set_expiry(settings.SESSION_COOKIE_AGE)
 
-        return None
+        return

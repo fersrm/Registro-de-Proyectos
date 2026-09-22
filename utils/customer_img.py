@@ -1,7 +1,8 @@
+import os
+
 from django.conf import settings
 from django.core.files.storage import default_storage
 from PIL import Image, ImageFile, UnidentifiedImageError
-import os
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -71,9 +72,7 @@ def handle_old_project_images(modelo, pk, nuevas_imagenes):
     new_images = nuevas_imagenes
 
     for old_img, new_img in zip(old_images, new_images):
-
         if old_img and new_img and old_img.path != new_img.path:
-
             if default_storage.exists(old_img.path):
                 default_storage.delete(old_img.path)
 
